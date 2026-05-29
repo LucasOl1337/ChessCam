@@ -1,0 +1,16 @@
+﻿name = "chesscam"
+main = "worker/src/index.ts"
+compatibility_date = "2026-05-29"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
+[[durable_objects.bindings]]
+name = "CHESSCAM_HUB"
+class_name = "ChessCamHub"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ChessCamHub"]

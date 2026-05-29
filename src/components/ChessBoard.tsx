@@ -1,15 +1,18 @@
-import React from 'react';
+﻿import React from 'react';
 import { Chessboard, type ChessboardOptions } from 'react-chessboard';
 import { RotateCcw, StepBack } from 'lucide-react';
+import type { Move as ChessMove, Square } from 'chess.js';
 import { ChessEngine } from '../chess/chessEngine';
+
+type PromotionPiece = 'q' | 'r' | 'b' | 'n';
 
 interface ChessBoardProps {
   onGameOver?: (result: string) => void;
-  onMove?: (move: any) => void;
+  onMove?: (move: ChessMove) => void;
   onReset?: () => void;
   externalFen?: string;
   playerColor?: 'white' | 'black';
-  onMoveRequest?: (from: string, to: string, promotion?: string) => void;
+  onMoveRequest?: (from: Square, to: Square, promotion?: PromotionPiece) => void;
   disabled?: boolean;
 }
 
@@ -31,18 +34,12 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
   const [legalMoves, setLegalMoves] = React.useState<string[]>([]);
   const [lastMove, setLastMove] = React.useState<{ from: string; to: string } | null>(null);
 
-  React.useEffect(() => {
-    if (externalFen && externalFen !== fen && engine.load(externalFen)) {
-      setFen(externalFen);
-      clearSelection();
-    }
-  }, [externalFen, engine, fen]);
-
   const currentFen = externalFen || fen;
+  const activeEngine = React.useMemo(() => (externalFen ? new ChessEngine(externalFen) : engine), [engine, externalFen]);
   const pieces = React.useMemo(() => parseFen(currentFen), [currentFen]);
-  const turn = engine.getTurn();
-  const isCheck = engine.isCheck();
-  const isGameOver = engine.isGameOver();
+  const turn = activeEngine.getTurn();
+  const isCheck = activeEngine.isCheck();
+  const isGameOver = activeEngine.isGameOver();
   const isControlled = Boolean(onMoveRequest);
   const isMyTurn = !playerColor || (playerColor === 'white' && turn === 'w') || (playerColor === 'black' && turn === 'b');
 
@@ -84,22 +81,22 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
   function selectSquare(square: string) {
     if (!ownsTurnPiece(square)) return false;
     setSelectedSquare(square);
-    setLegalMoves(engine.getLegalMoves(square as any));
+    setLegalMoves(activeEngine.getLegalMoves(square as Square));
     return true;
   }
 
   function applyMove(from: string, to: string) {
     if (disabled || isGameOver || (isControlled && !isMyTurn)) return false;
-    if (!engine.getLegalMoves(from as any).includes(to)) return false;
+    if (!activeEngine.getLegalMoves(from as Square).includes(to)) return false;
 
     if (isControlled && onMoveRequest) {
       setLastMove({ from, to });
-      onMoveRequest(from, to, 'q');
+      onMoveRequest(from as Square, to as Square, 'q');
       clearSelection();
       return true;
     }
 
-    const move = engine.makeMove(from as any, to as any, 'q');
+    const move = engine.makeMove(from as Square, to as Square, 'q');
     if (!move) return false;
 
     setFen(engine.getFen());

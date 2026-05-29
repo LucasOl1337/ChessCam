@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local tunnel / wrangler state
+.cloudflared-chesscam.yml
+.wrangler/
+.wrangler-dry-run/
