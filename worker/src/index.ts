@@ -169,11 +169,10 @@ export class ChessCamHub implements DurableObject {
 
     if (hasOpponent) {
       const opponent = this.getOpponent(client);
+      if (opponent && this.waitingClientId === opponent.id) this.waitingClientId = undefined;
       if (opponent) {
         this.send(opponent, { type: 'opponent-connected', roomCode: room.code, opponent: { id: client.id }, initiator: true, fen: room.game.fen() });
       }
-    } else {
-      this.waitingClientId = client.id;
     }
   }
 

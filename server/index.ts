@@ -158,9 +158,8 @@ function joinRoom(client: Client, code: string) {
 
   if (hasOpponent) {
     const opponent = getOpponent(client);
+    if (opponent && waitingClientId === opponent.id) waitingClientId = undefined;
     if (opponent) send(opponent, { type: 'opponent-connected', roomCode: room.code, opponent: { id: client.id }, initiator: true, fen: room.game.fen() });
-  } else {
-    waitingClientId = client.id;
   }
 }
 
