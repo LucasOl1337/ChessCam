@@ -4,7 +4,7 @@
  */
 
 import { Chess } from 'chess.js';
-import type { Move, Square } from './types';
+import type { Square } from './types';
 
 export class ChessEngine {
   private game: Chess;

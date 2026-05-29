@@ -4,7 +4,7 @@
  */
 
 import { wsClient } from './wsClient';
-import type { ServerMessage, ClientMessage } from './protocol';
+import type { ServerMessage } from './protocol';
 
 export type PlayerColor = 'white' | 'black';
 
