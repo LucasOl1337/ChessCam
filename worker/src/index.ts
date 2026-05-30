@@ -7,6 +7,11 @@ export interface Env {
 
 type PlayerColor = 'white' | 'black';
 
+type TimeControl = {
+  minutes?: number;
+  increment?: number;
+};
+
 type ClientState = {
   id: string;
   ws: WebSocket;
@@ -19,6 +24,10 @@ type RoomState = {
   game: Chess;
   players: Map<string, ClientState>;
   createdAt: number;
+  whiteTime: number;
+  blackTime: number;
+  increment: number;
+  lastMoveTimestamp: number;
 };
 
 type ClientMessage = {
@@ -26,6 +35,7 @@ type ClientMessage = {
   roomCode?: string;
   move?: { from?: string; to?: string; promotion?: string };
   payload?: unknown;
+  timeControl?: TimeControl;
 };
 
 const START_FEN = new Chess().fen();
@@ -112,10 +122,10 @@ export class ChessCamHub implements DurableObject {
   private handleMessage(client: ClientState, message: ClientMessage) {
     switch (message.type) {
       case 'quick-match':
-        this.quickMatch(client);
+        this.quickMatch(client, message.timeControl);
         break;
       case 'join-room':
-        this.joinRoom(client, normalizeRoomCode(message.roomCode) || generateRoomCode(this.rooms));
+        this.joinRoom(client, normalizeRoomCode(message.roomCode) || generateRoomCode(this.rooms), message.timeControl);
         break;
       case 'make-move':
         this.makeMove(client, message);
@@ -128,18 +138,21 @@ export class ChessCamHub implements DurableObject {
       case 'leave':
         this.leaveRoom(client, true);
         break;
+      case 'rematch':
+        this.handleRematch(client);
+        break;
       default:
         this.send(client, { type: 'error', message: `Unknown message type: ${message.type}` });
     }
   }
 
-  private quickMatch(client: ClientState) {
+  private quickMatch(client: ClientState, timeControl?: TimeControl) {
     this.leaveRoom(client, false);
 
     const waiting = this.findWaitingClient(client.id);
     if (waiting) {
       this.waitingClientId = undefined;
-      const room = this.getRoom(waiting.roomCode) ?? this.createRoom();
+      const room = this.getRoom(waiting.roomCode) ?? this.createRoom(undefined, timeControl);
       if (!waiting.roomCode) this.addClientToRoom(waiting, room, 'white');
       this.addClientToRoom(client, room, 'black');
       this.send(client, this.roomJoinedPayload(room, client, true, false));
@@ -147,16 +160,16 @@ export class ChessCamHub implements DurableObject {
       return;
     }
 
-    const room = this.createRoom();
+    const room = this.createRoom(undefined, timeControl);
     this.addClientToRoom(client, room, 'white');
     this.waitingClientId = client.id;
     this.send(client, this.roomJoinedPayload(room, client, false, false));
   }
 
-  private joinRoom(client: ClientState, roomCode: string) {
+  private joinRoom(client: ClientState, roomCode: string, timeControl?: TimeControl) {
     this.leaveRoom(client, false);
 
-    const room = this.rooms.get(roomCode) ?? this.createRoom(roomCode);
+    const room = this.rooms.get(roomCode) ?? this.createRoom(roomCode, timeControl);
     if (room.players.size >= 2) {
       this.send(client, { type: 'error', message: 'Room is full.' });
       return;
@@ -209,7 +222,29 @@ export class ChessCamHub implements DurableObject {
       }
 
       const fen = room.game.fen();
-      this.broadcast(room, { type: 'move-made', move, fen, lastMove: `${from}-${to}` });
+      // Real elapsed time + increment (chess.com style)
+      const now = Date.now();
+      const elapsed = Math.floor((now - room.lastMoveTimestamp) / 1000);
+      const inc = room.increment || 0;
+
+      if (player.color === 'white') {
+        room.whiteTime = Math.max(0, room.whiteTime - elapsed) + inc;
+      } else {
+        room.blackTime = Math.max(0, room.blackTime - elapsed) + inc;
+      }
+      room.lastMoveTimestamp = now;
+
+      // Basic server-side timeout
+      if (room.whiteTime <= 0) {
+        this.broadcast(room, { type: 'game-over', reason: 'time', winner: 'black' });
+        return;
+      }
+      if (room.blackTime <= 0) {
+        this.broadcast(room, { type: 'game-over', reason: 'time', winner: 'white' });
+        return;
+      }
+
+      this.broadcast(room, { type: 'move-made', move, fen, lastMove: `${from}-${to}`, whiteTime: room.whiteTime, blackTime: room.blackTime });
 
       if (room.game.isCheckmate()) {
         this.broadcast(room, { type: 'game-over', reason: 'checkmate', winner: player.color });
@@ -232,6 +267,27 @@ export class ChessCamHub implements DurableObject {
     this.leaveRoom(client, true);
     this.clients.delete(client.ws);
   }
+
+
+  private handleRematch(client: ClientState) {
+    const room = this.getRoom(client.roomCode);
+    if (!room) return;
+
+    room.game.reset();
+    room.whiteTime = 5 * 60;
+    room.blackTime = 5 * 60;
+    (room as any).lastMoveTimestamp = Date.now();
+
+    const payload = {
+      type: 'rematch',
+      fen: room.game.fen(),
+      whiteTime: room.whiteTime,
+      blackTime: room.blackTime,
+    };
+
+    this.broadcast(room, payload);
+  }
+
 
   private leaveRoom(client: ClientState, notifyOpponent: boolean) {
     const room = this.getRoom(client.roomCode);
@@ -276,12 +332,17 @@ export class ChessCamHub implements DurableObject {
     };
   }
 
-  private createRoom(code = generateRoomCode(this.rooms)): RoomState {
+  private createRoom(code = generateRoomCode(this.rooms), timeControl?: TimeControl): RoomState {
+    const { initialTime, increment } = normalizeTimeControl(timeControl);
     const room: RoomState = {
       code,
       game: new Chess(),
       players: new Map(),
       createdAt: Date.now(),
+      whiteTime: initialTime,
+      blackTime: initialTime,
+      increment,
+      lastMoveTimestamp: Date.now(),
     };
     this.rooms.set(code, room);
     return room;
@@ -311,6 +372,14 @@ export class ChessCamHub implements DurableObject {
       client.ws.send(JSON.stringify(payload));
     }
   }
+}
+
+function normalizeTimeControl(timeControl?: TimeControl) {
+  const minutes = Math.max(0, timeControl?.minutes ?? 5);
+  return {
+    initialTime: minutes > 0 ? minutes * 60 : 24 * 60 * 60,
+    increment: Math.max(0, timeControl?.increment ?? 0),
+  };
 }
 
 function normalizeRoomCode(roomCode?: string) {

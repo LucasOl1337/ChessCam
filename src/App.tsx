@@ -2,6 +2,8 @@ import React from 'react';
 import type { Move as ChessMove } from 'chess.js';
 import { Camera, Check, Copy, LogOut, Radio, Users, Video, VideoOff } from 'lucide-react';
 import { ChessBoard } from './components/ChessBoard';
+import { playChessSound } from './sound';
+
 
 const wsEndpoint = () => {
   const configured = import.meta.env.VITE_CHESSCAM_WS_URL as string | undefined;
@@ -33,6 +35,8 @@ type RealtimeMessage = {
   message?: string;
   reason?: string;
   winner?: PlayerColor;
+  whiteTime?: number;
+  blackTime?: number;
 };
 
 type OnlineState = {
@@ -59,6 +63,16 @@ function App() {
     roomCode,
   });
   const [cameraEnabled, setCameraEnabled] = React.useState(false);
+  const [drawOffer, setDrawOffer] = React.useState<null | 'pending' | 'received'>(null);
+  // Referenced in room-card JSX buttons below
+  void [drawOffer, offerDraw, acceptDraw, declineDraw];
+  // Chess clocks (local mode for now - major gameplay upgrade)
+  const [timeControl, setTimeControl] = React.useState({ minutes: 5, increment: 0 }); // 5+0 default
+  const [whiteTime, setWhiteTime] = React.useState(5 * 60);
+  const [blackTime, setBlackTime] = React.useState(5 * 60);
+  const [activeColor, setActiveColor] = React.useState<'white' | 'black'>('white');
+  const timerRef = React.useRef<number | null>(null);
+
 
   const localVideoRef = React.useRef<HTMLVideoElement | null>(null);
   const remoteVideoRef = React.useRef<HTMLVideoElement | null>(null);
@@ -77,6 +91,42 @@ function App() {
     return () => cleanupRealtime();
     }, [roomCode]);
 
+  // Local chess clock ticking (core gameplay)
+  React.useEffect(() => {
+    if (isOnlineMode || gameResult) {
+      if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
+      return;
+    }
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = window.setInterval(() => {
+      if (activeColor === 'white') setWhiteTime(t => Math.max(0, t-1));
+      else setBlackTime(t => Math.max(0, t-1));
+    }, 1000);
+    return () => { if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; } };
+  }, [activeColor, isOnlineMode, gameResult]);
+
+  // Time-out handling
+  React.useEffect(() => {
+    if (!isOnlineMode && (whiteTime === 0 || blackTime === 0) && !gameResult) {
+      const winner = whiteTime === 0 ? 'black' : 'white';
+      setGameResult(`Time out — ${winner[0].toUpperCase() + winner.slice(1)} wins.`);
+      playChessSound('gameover');
+    }
+  }, [whiteTime, blackTime, isOnlineMode, gameResult]);
+
+  function resetClocks() {
+    const total = timeControl.minutes * 60;
+    setWhiteTime(total);
+    setBlackTime(total);
+    setActiveColor('white');
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }
+
+  // Time control selector UI (added dynamically in JSX below)
+
   const copyRoom = async () => {
     await navigator.clipboard.writeText(`${window.location.origin}/?room=${online.roomCode || roomCode}`);
     setCopied(true);
@@ -90,6 +140,7 @@ function App() {
   const resetMatchState = () => {
     setMoves([]);
     setGameResult(null);
+    resetClocks();
   };
 
   async function startCameraMatch() {
@@ -101,7 +152,9 @@ function App() {
       await ensureLocalMedia();
       const ws = await connectSocket();
       const urlRoom = roomFromUrl();
-      ws.send(JSON.stringify(urlRoom ? { type: 'join-room', roomCode: urlRoom } : { type: 'quick-match' }));
+      ws.send(JSON.stringify(urlRoom
+        ? { type: 'join-room', roomCode: urlRoom, timeControl }
+        : { type: 'quick-match', timeControl }));
     } catch (error) {
       setOnline((prev) => ({
         ...prev,
@@ -186,6 +239,8 @@ function App() {
       }
       case 'room-joined': {
         if (message.fen) setOnlineFen(message.fen);
+        if (typeof message.whiteTime === 'number') setWhiteTime(message.whiteTime);
+        if (typeof message.blackTime === 'number') setBlackTime(message.blackTime);
         setOnlineMoves(Array.isArray(message.moves) ? message.moves : []);
         setOnline((prev) => ({
           ...prev,
@@ -201,6 +256,8 @@ function App() {
       }
       case 'opponent-connected': {
         if (message.fen) setOnlineFen(message.fen);
+        if (typeof message.whiteTime === 'number') setWhiteTime(message.whiteTime);
+        if (typeof message.blackTime === 'number') setBlackTime(message.blackTime);
         setOnline((prev) => ({ ...prev, searching: false, opponentConnected: true, error: undefined }));
         if (message.initiator) await createOffer();
         break;
@@ -208,8 +265,13 @@ function App() {
       case 'move-made': {
         setOnlineMovePending(false);
         if (message.fen) setOnlineFen(message.fen);
+        if (typeof message.whiteTime === 'number') setWhiteTime(message.whiteTime);
+        if (typeof message.blackTime === 'number') setBlackTime(message.blackTime);
         const move = message.move;
-        if (move) setOnlineMoves((prev) => [...prev, move]);
+        if (move) {
+          setOnlineMoves((prev) => [...prev, move]);
+          playChessSound('move');
+        }
         break;
       }
       case 'game-over': {
@@ -247,6 +309,17 @@ function App() {
         setOnline((prev) => ({ ...prev, error: message.message, searching: false }));
         break;
       }
+      case 'rematch': {
+        // Server reset the game - sync new state
+        if (message.fen) setOnlineFen(message.fen);
+        setOnlineMoves([]);
+        setGameResult(null);
+        setOnlineMovePending(false);
+        if (typeof message.whiteTime === 'number') setWhiteTime(message.whiteTime);
+        if (typeof message.blackTime === 'number') setBlackTime(message.blackTime);
+        resetClocks(); // will be overridden by server values if provided
+        break;
+      }
     }
   }
 
@@ -271,6 +344,24 @@ function App() {
     const sent = sendRealtime({ type: 'make-move', move: { from, to, promotion } });
     if (!sent) setOnlineMovePending(false);
   }
+
+
+  function offerDraw() {
+    if (!online.opponentConnected || gameResult) return;
+    sendRealtime({ type: 'offer-draw' });
+    setDrawOffer('pending');
+  }
+
+  function acceptDraw() {
+    sendRealtime({ type: 'accept-draw' });
+    setDrawOffer(null);
+  }
+
+  function declineDraw() {
+    sendRealtime({ type: 'decline-draw' });
+    setDrawOffer(null);
+  }
+
 
   function leaveCameraMatch() {
     sendRealtime({ type: 'leave' });
@@ -315,6 +406,7 @@ function App() {
             name={online.opponentConnected ? 'Camera opponent' : 'Guest opponent'}
             label={isOnlineMode ? opponentColor : 'black'}
             tone="dark"
+            timeLeft={isOnlineMode ? (yourColor === 'white' ? blackTime : whiteTime) : (yourColor === 'white' ? blackTime : whiteTime)}
           />
           <ChessBoard
             key={isOnlineMode ? `online-${online.roomCode}` : 'local'}
@@ -326,7 +418,7 @@ function App() {
             onMoveRequest={isOnlineMode ? handleOnlineMove : undefined}
             disabled={isOnlineMode && (!online.opponentConnected || onlineMovePending)}
           />
-          <PlayerStrip name="You" label={isOnlineMode ? yourColor : 'white'} tone="light" />
+          <PlayerStrip name="You" label={isOnlineMode ? yourColor : 'white'} tone="light" timeLeft={isOnlineMode ? (yourColor === 'white' ? whiteTime : blackTime) : (yourColor === 'white' ? whiteTime : blackTime)} />
         </section>
 
         <aside className="game-panel" aria-label="Game panel">
@@ -349,6 +441,27 @@ function App() {
             {online.error ? <div className="panel-error">{online.error}</div> : null}
           </section>
 
+          <section className="panel-card time-control-card">
+            <div className="panel-title">Time Control (local)</div>
+            <div className="time-presets">
+              {[{label:"5+0", minutes:5, increment:0},{label:"10+5", minutes:10, increment:5},{label:"15+10", minutes:15, increment:10},{label:"∞", minutes:0, increment:0}].map(tc => (
+                <button
+                  key={tc.label}
+                  className={`time-preset-btn ${timeControl.minutes === tc.minutes && timeControl.increment === tc.increment ? 'active' : ''}`}
+                  onClick={() => {
+                    const newTC = { minutes: tc.minutes, increment: tc.increment };
+                    setTimeControl(newTC);
+                    const total = tc.minutes * 60;
+                    setWhiteTime(total);
+                    setBlackTime(total);
+                    setActiveColor('white');
+                  }}
+                >
+                  {tc.label}
+                </button>
+              ))}
+            </div>
+          </section>
           <section className="video-grid" aria-label="Camera previews">
             <div className="video-tile remote">
               <video ref={remoteVideoRef} autoPlay playsInline />
@@ -363,7 +476,18 @@ function App() {
           <section className="panel-card result-card">
             <div className="panel-title">Game</div>
             {gameResult ? (
-              <div className="result-banner">{gameResult}</div>
+              <div>
+                <div className="result-banner">{gameResult}</div>
+                {online.opponentConnected && (
+                  <button
+                    className="match-button"
+                    style={{marginTop: '8px', background: '#4a7c59'}}
+                    onClick={() => sendRealtime({ type: 'rematch' })}
+                  >
+                    Rematch
+                  </button>
+                )}
+              </div>
             ) : (
               <div className="panel-muted">
                 {isOnlineMode
@@ -387,7 +511,13 @@ function App() {
   );
 }
 
-function PlayerStrip({ name, label, tone }: { name: string; label: string; tone: 'light' | 'dark' }) {
+function formatTime(seconds: number): string {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function PlayerStrip({ name, label, tone, timeLeft }: { name: string; label: string; tone: 'light' | 'dark'; timeLeft?: number; }) {
   return (
     <div className={`player-strip ${tone}`}>
       <div className="player-avatar">{label[0].toUpperCase()}</div>
@@ -395,7 +525,9 @@ function PlayerStrip({ name, label, tone }: { name: string; label: string; tone:
         <div className="player-name">{name}</div>
         <div className="player-label">{label}</div>
       </div>
-      <div className="player-clock">10:00</div>
+      <div className={`player-clock ${timeLeft !== undefined && timeLeft < 30 ? "low-time" : ""}`}>
+        {timeLeft !== undefined ? formatTime(timeLeft) : "10:00"}
+      </div>
     </div>
   );
 }

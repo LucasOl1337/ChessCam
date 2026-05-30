@@ -494,3 +494,241 @@ button {
     min-height: 210px;
   }
 }
+
+/* Promotion piece selector (improved chess gameplay) */
+.board-frame {
+  position: relative;
+}
+
+.promotion-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.68);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  backdrop-filter: blur(1px);
+}
+
+.promotion-dialog {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  box-shadow: 0 22px 45px rgba(0, 0, 0, 0.65);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: 210px;
+}
+
+.promotion-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.promotion-choices {
+  display: flex;
+  gap: 6px;
+}
+
+.promotion-choice {
+  width: 46px;
+  height: 46px;
+  font-size: 28px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  background: var(--surface-2);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.08s ease, background 0.1s ease, color 0.1s ease;
+  color: #f5f3ee;
+  font-family: "Segoe UI Symbol", "DejaVu Sans", "Noto Sans Symbols", sans-serif;
+}
+
+.promotion-choice:hover {
+  background: var(--green);
+  color: #0f120a;
+  transform: scale(1.06);
+  border-color: var(--green);
+}
+
+.promotion-cancel {
+  font-size: 11px;
+  padding: 3px 10px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--muted);
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.promotion-cancel:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Resign action (gameplay improvement round) */
+.resign-button {
+  width: 100%;
+  height: 32px;
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid rgba(217, 83, 79, .35);
+  border-radius: 6px;
+  color: #ffcdc9;
+  background: rgba(217, 83, 79, .1);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+.resign-button:hover {
+  background: rgba(217, 83, 79, .22);
+  color: #fff;
+}
+
+/* Time control selector (chess gameplay improvement) */
+.time-control-card {
+  padding: 14px 16px;
+}
+.time-presets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 8px 0 4px;
+}
+.time-preset-btn {
+  flex: 1;
+  min-width: 52px;
+  height: 32px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 1px solid rgba(255,255,255,.12);
+  background: var(--surface-2);
+  color: var(--text);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all .1s ease;
+}
+.time-preset-btn:hover:not(:disabled) {
+  background: var(--surface-3);
+  border-color: var(--green);
+}
+.time-preset-btn.active {
+  background: var(--green);
+  color: #111;
+  border-color: var(--green);
+}
+.time-preset-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.time-hint {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 4px;
+}
+.player-clock.low-time {
+  color: #ff6b6b;
+  animation: pulse 1s infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Captured pieces display (chess.com-style material awareness) */
+.captured-card {
+  padding: 12px 14px;
+  font-size: 13px;
+}
+.captured-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 4px 0;
+}
+.captured-label {
+  color: var(--muted);
+  font-weight: 600;
+  min-width: 52px;
+}
+.captured-pieces {
+  font-family: monospace;
+  font-size: 15px;
+  letter-spacing: 2px;
+  color: #ddd;
+}
+
+/* Captured pieces (material balance - chess.com inspired) */
+.captured-card { padding: 10px 12px; font-size: 13px; }
+.captured-row { display: flex; align-items: center; gap: 6px; margin: 3px 0; }
+.captured-label { color: var(--muted); font-weight: 600; width: 48px; }
+.captured-pieces { font-family: ui-monospace, monospace; font-size: 15px; letter-spacing: 1px; color: #ddd; }
+
+/* Draw offer UI (chess.com style) */
+.draw-button {
+  width: 100%;
+  height: 32px;
+  margin-top: 6px;
+  background: #3a3a2e;
+  color: #d4af37;
+  border: 1px solid #d4af37;
+  border-radius: 5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.draw-button:disabled { opacity: 0.6; }
+.draw-offer {
+  margin-top: 8px;
+  padding: 8px;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid #d4af37;
+  border-radius: 6px;
+  font-size: 13px;
+  text-align: center;
+}
+.draw-offer button {
+  margin: 4px 4px 0;
+  padding: 4px 10px;
+  font-size: 12px;
+  background: #d4af37;
+  color: #111;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Match action buttons */
+.resign-button {
+  width: 100%;
+  height: 32px;
+  margin-top: 6px;
+  background: #5c2e2e;
+  color: #ff9e9e;
+  border: 1px solid #ff6b6b;
+  border-radius: 5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 13px;
+}
+.resign-button:hover { background: #7a3f3f; }
+
+/* Rematch button */
+.result-banner + button,
+.result-banner + div button {
+  background: #4a7c59 !important;
+  margin-top: 8px;
+}

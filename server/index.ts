@@ -11,6 +11,11 @@ import { Chess } from 'chess.js';
 
 type PlayerColor = 'white' | 'black';
 
+type TimeControl = {
+  minutes?: number;
+  increment?: number;
+};
+
 type Client = {
   id: string;
   ws: WebSocket;
@@ -23,6 +28,10 @@ type GameRoom = {
   players: Map<string, Client>;
   game: Chess;
   createdAt: number;
+  whiteTime: number;
+  blackTime: number;
+  increment: number;
+  lastMoveTimestamp: number;
 };
 
 type ClientMessage = {
@@ -30,6 +39,7 @@ type ClientMessage = {
   roomCode?: string;
   move?: { from?: string; to?: string; promotion?: string };
   payload?: unknown;
+  timeControl?: TimeControl;
 };
 
 const rooms = new Map<string, GameRoom>();
@@ -49,7 +59,7 @@ function normalizeRoomCode(code?: string) {
 }
 
 function createRoom(code = generateRoomCode()): GameRoom {
-  const room: GameRoom = { code, players: new Map(), game: new Chess(), createdAt: Date.now() };
+  const room: GameRoom = { code, players: new Map(), game: new Chess(), createdAt: Date.now(), whiteTime: 0, blackTime: 0, lastMoveTimestamp: Date.now(), increment: 0 };
   rooms.set(code, room);
   console.log(`[Server] Created room ${code}`);
   return room;
@@ -119,7 +129,7 @@ function leaveRoom(client: Client, notifyOpponent: boolean) {
   rooms.delete(room.code);
 }
 
-function quickMatch(client: Client) {
+function quickMatch(client: Client, timeControl?: TimeControl) {
   leaveRoom(client, false);
 
   const waiting = Array.from(clients.values()).find(
@@ -128,7 +138,7 @@ function quickMatch(client: Client) {
 
   if (waiting) {
     waitingClientId = undefined;
-    const room = getRoom(waiting.roomCode) ?? createRoom();
+    const room = getRoom(waiting.roomCode) ?? createRoom(undefined, timeControl);
     if (!waiting.roomCode) addClientToRoom(waiting, room, 'white');
     addClientToRoom(client, room, 'black');
     send(client, roomJoinedPayload(room, client, true, false));
@@ -137,15 +147,15 @@ function quickMatch(client: Client) {
     return;
   }
 
-  const room = createRoom();
+  const room = createRoom(undefined, timeControl);
   addClientToRoom(client, room, 'white');
   waitingClientId = client.id;
   send(client, roomJoinedPayload(room, client, false, false));
 }
 
-function joinRoom(client: Client, code: string) {
+function joinRoom(client: Client, code: string, timeControl?: TimeControl) {
   leaveRoom(client, false);
-  const room = getRoom(code) ?? createRoom(code);
+  const room = getRoom(code) ?? createRoom(code, timeControl);
 
   if (room.players.size >= 2) {
     send(client, { type: 'error', message: 'Room is full.' });
@@ -162,6 +172,29 @@ function joinRoom(client: Client, code: string) {
     if (opponent) send(opponent, { type: 'opponent-connected', roomCode: room.code, opponent: { id: client.id }, initiator: true, fen: room.game.fen() });
   }
 }
+
+
+function handleRematch(client: Client) {
+  const room = getRoom(client.roomCode);
+  if (!room) return;
+
+  // Reset game
+  room.game.reset();
+  room.whiteTime = 5 * 60; // or from stored timeControl if we had it
+  room.blackTime = 5 * 60;
+  room.lastMoveTimestamp = Date.now();
+
+  const payload = {
+    type: 'rematch',
+    fen: room.game.fen(),
+    whiteTime: room.whiteTime,
+    blackTime: room.blackTime,
+  };
+
+  broadcast(room, payload);
+  console.log(`[Server] Rematch in room ${room.code}`);
+}
+
 
 function makeMove(client: Client, message: ClientMessage) {
   const room = getRoom(client.roomCode);
@@ -181,7 +214,30 @@ function makeMove(client: Client, message: ClientMessage) {
     if (!move) return send(client, { type: 'error', message: 'Invalid move.' });
 
     const fen = room.game.fen();
-    broadcast(room, { type: 'move-made', move, fen, lastMove: `${from}-${to}` });
+    // Real chess clock logic (chess.com style)
+    const now = Date.now();
+    const elapsed = Math.floor((now - room.lastMoveTimestamp) / 1000);
+    const inc = room.increment;
+
+    if (player.color === 'white') {
+      room.whiteTime = Math.max(0, room.whiteTime - elapsed) + inc;
+    } else {
+      room.blackTime = Math.max(0, room.blackTime - elapsed) + inc;
+    }
+
+    room.lastMoveTimestamp = now;
+
+    // Basic server-side time-out check
+    if (room.whiteTime <= 0) {
+      broadcast(room, { type: 'game-over', reason: 'time', winner: 'black' });
+      return;
+    }
+    if (room.blackTime <= 0) {
+      broadcast(room, { type: 'game-over', reason: 'time', winner: 'white' });
+      return;
+    }
+
+    broadcast(room, { type: 'move-made', move, fen, lastMove: `${from}-${to}`, whiteTime: room.whiteTime, blackTime: room.blackTime });
 
     if (room.game.isCheckmate()) broadcast(room, { type: 'game-over', reason: 'checkmate', winner: player.color });
     else if (room.game.isStalemate()) broadcast(room, { type: 'game-over', reason: 'stalemate' });
@@ -191,6 +247,18 @@ function makeMove(client: Client, message: ClientMessage) {
   }
 }
 
+
+function handleResign(client: Client) {
+  const room = getRoom(client.roomCode);
+  if (!room) return send(client, { type: 'error', message: 'Room not found.' });
+
+  const player = room.players.get(client.id);
+  if (!player?.color) return send(client, { type: 'error', message: 'You are not seated in this room.' });
+
+  const winner: PlayerColor = player.color === 'white' ? 'black' : 'white';
+  broadcast(room, { type: 'game-over', reason: 'resignation', winner });
+  console.log(`[Server] ${player.color} resigned in ${room.code}`);
+}
 function forwardToOpponent(client: Client, message: ClientMessage) {
   const opponent = getOpponent(client);
   if (opponent) send(opponent, { type: message.type, from: client.id, payload: message.payload });
@@ -199,13 +267,16 @@ function forwardToOpponent(client: Client, message: ClientMessage) {
 function handleClientMessage(client: Client, message: ClientMessage) {
   switch (message.type) {
     case 'quick-match':
-      quickMatch(client);
+      quickMatch(client, message.timeControl);
       break;
     case 'join-room':
-      joinRoom(client, normalizeRoomCode(message.roomCode) || generateRoomCode());
+      joinRoom(client, normalizeRoomCode(message.roomCode) || generateRoomCode(), message.timeControl);
       break;
     case 'make-move':
       makeMove(client, message);
+      break;
+    case 'resign':
+      handleResign(client);
       break;
     case 'webrtc-offer':
     case 'webrtc-answer':
@@ -214,6 +285,9 @@ function handleClientMessage(client: Client, message: ClientMessage) {
       break;
     case 'leave':
       leaveRoom(client, true);
+      break;
+    case 'rematch':
+      handleRematch(client);
       break;
     default:
       send(client, { type: 'error', message: `Unknown message type: ${message.type}` });

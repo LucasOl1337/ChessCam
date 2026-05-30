@@ -1,4 +1,5 @@
-﻿name = "chesscam"
+name = "chesscam"
+account_id = "f838f7d26348a09f88fb38ea03272857"
 main = "worker/src/index.ts"
 compatibility_date = "2026-05-29"
 
@@ -14,3 +15,7 @@ class_name = "ChessCamHub"
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["ChessCamHub"]
+
+[[routes]]
+pattern = "chess.luca-ai.com.br"
+custom_domain = true

@@ -1,10 +1,15 @@
-﻿import React from 'react';
+import React from 'react';
 import { Chessboard, type ChessboardOptions } from 'react-chessboard';
 import { RotateCcw, StepBack } from 'lucide-react';
 import type { Move as ChessMove, Square } from 'chess.js';
-import { ChessEngine } from '../chess/chessEngine';
+import { ChessEngine, type PromotionPiece } from '../chess/chessEngine';
 
-type PromotionPiece = 'q' | 'r' | 'b' | 'n';
+const PIECE_SYMBOLS: Record<PromotionPiece, { w: string; b: string }> = {
+  q: { w: '?', b: '?' },
+  r: { w: '?', b: '?' },
+  b: { w: '?', b: '?' },
+  n: { w: '?', b: '?' },
+};
 
 interface ChessBoardProps {
   onGameOver?: (result: string) => void;
@@ -33,6 +38,7 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
   const [selectedSquare, setSelectedSquare] = React.useState<string | null>(null);
   const [legalMoves, setLegalMoves] = React.useState<string[]>([]);
   const [lastMove, setLastMove] = React.useState<{ from: string; to: string } | null>(null);
+  const [pendingPromotion, setPendingPromotion] = React.useState<null | { from: string; to: string; options: PromotionPiece[]; fen: string }>(null);
 
   const currentFen = externalFen || fen;
   const activeEngine = React.useMemo(() => (externalFen ? new ChessEngine(externalFen) : engine), [engine, externalFen]);
@@ -41,7 +47,9 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
   const isCheck = activeEngine.isCheck();
   const isGameOver = activeEngine.isGameOver();
   const isControlled = Boolean(onMoveRequest);
+  const activePendingPromotion = pendingPromotion && pendingPromotion.fen === currentFen && !isGameOver ? pendingPromotion : null;
   const isMyTurn = !playerColor || (playerColor === 'white' && turn === 'w') || (playerColor === 'black' && turn === 'b');
+
 
   function parseFen(fenString: string): Record<string, string> {
     const result: Record<string, string> = {};
@@ -85,18 +93,18 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
     return true;
   }
 
-  function applyMove(from: string, to: string) {
+  function applyMove(from: string, to: string, promotion: PromotionPiece = 'q') {
     if (disabled || isGameOver || (isControlled && !isMyTurn)) return false;
     if (!activeEngine.getLegalMoves(from as Square).includes(to)) return false;
 
     if (isControlled && onMoveRequest) {
       setLastMove({ from, to });
-      onMoveRequest(from as Square, to as Square, 'q');
+      onMoveRequest(from as Square, to as Square, promotion);
       clearSelection();
       return true;
     }
 
-    const move = engine.makeMove(from as Square, to as Square, 'q');
+    const move = engine.makeMove(from as Square, to as Square, promotion);
     if (!move) return false;
 
     setFen(engine.getFen());
@@ -117,10 +125,40 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
     return true;
   }
 
+  function handleMoveAttempt(from: string, to: string) {
+    if (disabled || isGameOver || (isControlled && !isMyTurn)) return false;
+    if (!activeEngine.getLegalMoves(from as Square).includes(to)) return false;
+
+    // Check if this is a promoting move
+    const engForProm = externalFen ? new ChessEngine(externalFen) : engine;
+    const options = engForProm.getPromotionOptions(from as Square, to as Square);
+    if (options.length > 0) {
+      setPendingPromotion({ from, to, options, fen: currentFen });
+      clearSelection();
+      return false; // Do not apply yet; user must choose piece. (drag will snap back)
+    }
+
+    return applyMove(from, to);
+  }
+
+  function completePromotion(piece: PromotionPiece) {
+    if (!activePendingPromotion) return;
+    const { from, to } = activePendingPromotion;
+    setPendingPromotion(null);
+    applyMove(from, to, piece);
+  }
+
+  function cancelPromotion() {
+    setPendingPromotion(null);
+  }
+
   function handleSquareClick(square: string) {
     if (disabled || isGameOver || (isControlled && !isMyTurn)) return;
 
-    if (selectedSquare && applyMove(selectedSquare, square)) return;
+    if (selectedSquare) {
+      handleMoveAttempt(selectedSquare, square);
+      return;
+    }
     if (selectedSquare === square) {
       clearSelection();
       return;
@@ -133,6 +171,7 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
     engine.reset();
     setFen(engine.getFen());
     setLastMove(null);
+    setPendingPromotion(null);
     clearSelection();
     onReset?.();
   }
@@ -141,6 +180,7 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
     engine.undo();
     setFen(engine.getFen());
     setLastMove(null);
+    setPendingPromotion(null);
     clearSelection();
   }
 
@@ -189,11 +229,11 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
     draggingPieceStyle: {
       filter: 'drop-shadow(0 10px 12px rgba(0,0,0,.35))',
     },
-    allowDragging: !disabled && !isGameOver && (!isControlled || isMyTurn),
-    canDragPiece: ({ square }) => Boolean(square && ownsTurnPiece(square)),
+    allowDragging: !disabled && !isGameOver && (!isControlled || isMyTurn) && !activePendingPromotion,
+    canDragPiece: ({ square }) => Boolean(square && ownsTurnPiece(square) && !activePendingPromotion),
     onPieceDrop: ({ sourceSquare, targetSquare }) => {
       if (!targetSquare) return false;
-      return applyMove(sourceSquare, targetSquare);
+      return handleMoveAttempt(sourceSquare, targetSquare);
     },
     onSquareClick: ({ square }) => handleSquareClick(square),
     onPieceClick: ({ square }) => {
@@ -223,6 +263,36 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
 
       <div className="board-frame">
         <Chessboard options={boardOptions} />
+        {activePendingPromotion && (
+          <div className="promotion-overlay">
+            <div className="promotion-dialog" role="dialog" aria-label="Choose promotion piece">
+              <div className="promotion-title">Promote to</div>
+              <div className="promotion-choices">
+                {activePendingPromotion.options
+                  .slice()
+                  .sort((a, b) => 'qrbn'.indexOf(a) - 'qrbn'.indexOf(b))
+                  .map((p) => {
+                    const isWhiteTurn = turn === 'w';
+                    const sym = PIECE_SYMBOLS[p][isWhiteTurn ? 'w' : 'b'];
+                    return (
+                      <button
+                        key={p}
+                        type="button"
+                        className="promotion-choice"
+                        onClick={() => completePromotion(p)}
+                        aria-label={`Promote to ${p === 'q' ? 'queen' : p === 'r' ? 'rook' : p === 'b' ? 'bishop' : 'knight'}`}
+                      >
+                        {sym}
+                      </button>
+                    );
+                  })}
+              </div>
+              <button type="button" className="promotion-cancel" onClick={cancelPromotion}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
