@@ -141,6 +141,18 @@ export class ChessCamHub implements DurableObject {
       case 'rematch':
         this.handleRematch(client);
         break;
+      case 'resign':
+        this.handleResign(client);
+        break;
+      case 'offer-draw':
+        this.handleOfferDraw(client);
+        break;
+      case 'accept-draw':
+        this.handleAcceptDraw(client);
+        break;
+      case 'decline-draw':
+        this.handleDeclineDraw(client);
+        break;
       default:
         this.send(client, { type: 'error', message: `Unknown message type: ${message.type}` });
     }
@@ -274,8 +286,6 @@ export class ChessCamHub implements DurableObject {
     if (!room) return;
 
     room.game.reset();
-    room.whiteTime = 5 * 60;
-    room.blackTime = 5 * 60;
     (room as any).lastMoveTimestamp = Date.now();
 
     const payload = {
@@ -288,6 +298,38 @@ export class ChessCamHub implements DurableObject {
     this.broadcast(room, payload);
   }
 
+  private handleResign(client: ClientState) {
+    const room = this.getRoom(client.roomCode);
+    if (!room) return this.send(client, { type: 'error', message: 'Room not found.' });
+    const player = room.players.get(client.id);
+    if (!player?.color) return this.send(client, { type: 'error', message: 'You are not seated in this room.' });
+    const winner = player.color === 'white' ? 'black' : 'white';
+    this.broadcast(room, { type: 'game-over', reason: 'resignation', winner });
+  }
+
+  private handleOfferDraw(client: ClientState) {
+    const room = this.getRoom(client.roomCode);
+    if (!room) return;
+    const opponent = this.getOpponent(client);
+    if (opponent) {
+      this.send(opponent, { type: 'draw-offer' });
+    }
+  }
+
+  private handleAcceptDraw(client: ClientState) {
+    const room = this.getRoom(client.roomCode);
+    if (!room) return;
+    const opponent = this.getOpponent(client);
+    if (opponent) this.send(opponent, { type: 'draw-accepted' });
+    this.broadcast(room, { type: 'game-over', reason: 'draw' });
+  }
+
+  private handleDeclineDraw(client: ClientState) {
+    const room = this.getRoom(client.roomCode);
+    if (!room) return;
+    const opponent = this.getOpponent(client);
+    if (opponent) this.send(opponent, { type: 'draw-declined' });
+  }
 
   private leaveRoom(client: ClientState, notifyOpponent: boolean) {
     const room = this.getRoom(client.roomCode);

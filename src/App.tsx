@@ -1,7 +1,9 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Move as ChessMove } from 'chess.js';
-import { Camera, Check, Copy, LogOut, Radio, Users, Video, VideoOff } from 'lucide-react';
+import { ChessEngine } from './chess/chessEngine';
+import { Camera, Check, Copy, LogOut, Radio, Users, Video, VideoOff, RotateCw } from 'lucide-react';
 import { ChessBoard } from './components/ChessBoard';
+import { GamePanel } from './components/GamePanel';
 import { playChessSound } from './sound';
 
 
@@ -64,8 +66,15 @@ function App() {
   });
   const [cameraEnabled, setCameraEnabled] = React.useState(false);
   const [drawOffer, setDrawOffer] = React.useState<null | 'pending' | 'received'>(null);
-  // Referenced in room-card JSX buttons below
-  void [drawOffer, offerDraw, acceptDraw, declineDraw];
+  // History navigation for analysis (chess.com style review/scrub) - local primary
+  const [historyIndex, setHistoryIndex] = React.useState<number | null>(null); // null = live position
+  const [boardFlipped, setBoardFlipped] = React.useState(false); // local flip (chess.com style)
+  // analysisArrows removed - will be re-added with Stockfish integration
+  const [analysisResult, setAnalysisResult] = React.useState<null | { bestMove: string; eval: number }>(null);
+  const [_screen, _setScreen] = React.useState<'landing' | 'game'>('game');
+  const [screen, setScreen] = React.useState<'landing' | 'game'>('landing');
+  const [gameMode, setGameMode] = React.useState<'local' | 'online'>('local');
+  // drawOffer etc now used in JSX actions
   // Chess clocks (local mode for now - major gameplay upgrade)
   const [timeControl, setTimeControl] = React.useState({ minutes: 5, increment: 0 }); // 5+0 default
   const [whiteTime, setWhiteTime] = React.useState(5 * 60);
@@ -82,6 +91,10 @@ function App() {
 
   const isOnlineMode = online.connected;
   const visibleMoves = onlineMoves.length ? onlineMoves : moves;
+  // For history scrub (local): compute FEN at selected index
+  const localViewFen = !isOnlineMode && historyIndex !== null 
+    ? getFenForHistoryIndex(historyIndex, moves) 
+    : undefined;
   const yourColor = online.color ?? 'white';
   const opponentColor: PlayerColor = yourColor === 'white' ? 'black' : 'white';
   const isPrivateInvite = Boolean(roomFromUrl());
@@ -91,7 +104,46 @@ function App() {
     return () => cleanupRealtime();
     }, [roomCode]);
 
-  // Local chess clock ticking (core gameplay)
+
+  // Keyboard shortcuts (chess.com inspired)
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.target && (e.target as HTMLElement).tagName === 'INPUT') return;
+      if (isOnlineMode && !gameResult) return; // conservative for online
+
+      if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'z') {
+        // prev or undo
+        if (!isOnlineMode) {
+          const cur = historyIndex ?? moves.length - 1;
+          jumpToHistory(Math.max(0, cur - 1));
+          e.preventDefault();
+        }
+      }
+      if (e.key === 'ArrowRight') {
+        if (!isOnlineMode) {
+          const cur = historyIndex ?? -1;
+          jumpToHistory(Math.min(moves.length - 1, cur + 1));
+          e.preventDefault();
+        }
+      }
+      if (e.key.toLowerCase() === 'f') {
+        setBoardFlipped(fl => !fl);
+        e.preventDefault();
+      }
+      if (e.key.toLowerCase() === 'r' && !gameResult) {
+        handleResign();
+        e.preventDefault();
+      }
+      if ((e.key.toLowerCase() === 'd' || e.key === '?') && !gameResult) {
+        offerDraw();
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [historyIndex, moves.length, isOnlineMode, gameResult, boardFlipped]);
+
+  // Local chess clock ticking - completely disabled in online mode (server is authoritative)
   React.useEffect(() => {
     if (isOnlineMode || gameResult) {
       if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
@@ -135,13 +187,76 @@ function App() {
 
   const handleMove = (move: MoveRecord) => {
     setMoves((prev) => [...prev, move]);
+    setHistoryIndex(null); // new move returns to live
   };
 
   const resetMatchState = () => {
     setMoves([]);
     setGameResult(null);
+    setHistoryIndex(null);
     resetClocks();
   };
+
+  // Compute FEN by replaying moves up to index (for history scrub)
+  function getFenForHistoryIndex(idx: number | null, moveList: MoveRecord[]): string | undefined {
+    if (idx === null || !moveList || moveList.length === 0) return undefined;
+    const eng = new ChessEngine();
+    const toReplay = Math.min(idx + 1, moveList.length);
+    for (let i = 0; i < toReplay; i++) {
+      const m = moveList[i];
+      if (m && 'from' in m && 'to' in m) {
+        try {
+          eng.makeMove(m.from as any, m.to as any, (m.promotion as any) || 'q');
+        } catch {}
+      } else if (m && 'san' in m && typeof m.san === 'string') {
+        // Fallback: try san (less reliable without full context)
+        try { (eng as any).game.move(m.san); } catch {}
+      }
+    }
+    return eng.getFen();
+  }
+
+  function jumpToHistory(idx: number | null) {
+    if (isOnlineMode) return; // view only for now, or disable
+    setHistoryIndex(idx);
+    // The board will receive updated externalFen via computed
+  }
+
+  // resumeToLive removed
+  async function copyCurrentFEN() {
+    const fen = isOnlineMode ? (onlineFen || '') : (localViewFen || (new ChessEngine().getFen()));
+    if (!fen) return;
+    await navigator.clipboard.writeText(fen);
+    // simple feedback
+    const orig = document.title;
+    document.title = "FEN copied!";
+    setTimeout(() => document.title = orig, 1200);
+  }
+
+  async function copyPGN() {
+    // Build PGN by replaying moves (works for local; online approximate)
+    const list = isOnlineMode ? onlineMoves : moves;
+    if (!list.length) return;
+    const eng = new ChessEngine();
+    const pgnMoves: string[] = [];
+    list.forEach((m, _i) => {
+      if (m && 'from' in m && 'to' in m) {
+        try {
+          const moveObj = eng.makeMove(m.from as any, m.to as any, (m.promotion as any) || 'q');
+          if (moveObj && moveObj.san) pgnMoves.push(moveObj.san);
+        } catch {}
+      }
+    });
+    const pgn = pgnMoves.length ? pgnMoves.join(' ') : '';
+    if (pgn) {
+      await navigator.clipboard.writeText(pgn);
+      const orig = document.title;
+      document.title = "PGN copied!";
+      setTimeout(() => document.title = orig, 1200);
+    }
+  }
+
+
 
   async function startCameraMatch() {
     try {
@@ -320,6 +435,19 @@ function App() {
         resetClocks(); // will be overridden by server values if provided
         break;
       }
+      case 'draw-offer': {
+        setDrawOffer('received');
+        break;
+      }
+      case 'draw-accepted':
+      case 'draw-declined': {
+        setDrawOffer(null);
+        if (message.type === 'draw-accepted') {
+          setGameResult('Draw by agreement.');
+          playChessSound('gameover');
+        }
+        break;
+      }
     }
   }
 
@@ -347,7 +475,14 @@ function App() {
 
 
   function offerDraw() {
-    if (!online.opponentConnected || gameResult) return;
+    if (gameResult) return;
+    if (!isOnlineMode || !online.opponentConnected) {
+      // Local or no opponent: treat as draw by agreement
+      setGameResult('Draw by agreement.');
+      playChessSound('gameover');
+      setDrawOffer(null);
+      return;
+    }
     sendRealtime({ type: 'offer-draw' });
     setDrawOffer('pending');
   }
@@ -363,7 +498,18 @@ function App() {
   }
 
 
-  function leaveCameraMatch() {
+  
+  function handleResign() {
+    if (gameResult) return;
+    if (isOnlineMode && online.opponentConnected) {
+      sendRealtime({ type: 'resign' });
+    } else {
+      setGameResult('You resigned.');
+      playChessSound('gameover');
+    }
+    setDrawOffer(null);
+  }
+function leaveCameraMatch() {
     sendRealtime({ type: 'leave' });
     cleanupRealtime();
     setOnline({ connected: false, searching: false, opponentConnected: false, roomCode });
@@ -384,7 +530,23 @@ function App() {
     if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
   }
 
-  return (
+  const analyzePosition = React.useCallback(async () => {
+    try {
+      const { analysisEngine } = await import('./chess/analysisEngine');
+      const eng = new ChessEngine();
+      const list = isOnlineMode ? onlineMoves : moves;
+      list.forEach((m: any) => {
+        if (m && 'from' in m && 'to' in m) {
+          try { eng.makeMove(m.from, m.to, m.promotion || 'q'); } catch {}
+        }
+      });
+      const result = await analysisEngine.analyze(eng.getFen());
+      setAnalysisResult(result);
+    } catch {
+      setAnalysisResult({ bestMove: '?', eval: 0 });
+    }
+  }, [moves, onlineMoves, isOnlineMode]);
+
     <div className="app-shell">
       <header className="topbar">
         <div className="brand-lockup">
@@ -413,108 +575,28 @@ function App() {
             onGameOver={setGameResult}
             onMove={isOnlineMode ? undefined : handleMove}
             onReset={resetMatchState}
-            externalFen={isOnlineMode ? onlineFen : undefined}
-            playerColor={isOnlineMode ? yourColor : undefined}
+            externalFen={isOnlineMode ? onlineFen : localViewFen}
+            playerColor={isOnlineMode ? yourColor : (boardFlipped ? 'black' : undefined)}
             onMoveRequest={isOnlineMode ? handleOnlineMove : undefined}
-            disabled={isOnlineMode && (!online.opponentConnected || onlineMovePending)}
+            disabled={isOnlineMode && (!online.opponentConnected || onlineMovePending) || (!isOnlineMode && historyIndex !== null)}
           />
           <PlayerStrip name="You" label={isOnlineMode ? yourColor : 'white'} tone="light" timeLeft={isOnlineMode ? (yourColor === 'white' ? whiteTime : blackTime) : (yourColor === 'white' ? whiteTime : blackTime)} />
         </section>
 
-        <aside className="game-panel" aria-label="Game panel">
-          <section className="panel-card room-card">
-            <div className="panel-kicker"><Radio size={14} /> Camera room</div>
-            <div className="room-code-row">
-              <span className="room-code">{online.roomCode || roomCode}</span>
-              <button className="icon-button" onClick={copyRoom} aria-label="Copy room link">
-                {copied ? <Check size={18} /> : <Copy size={18} />}
-              </button>
-            </div>
-            <button className="match-button" onClick={startCameraMatch} disabled={online.searching || online.opponentConnected}>
-              <Users size={17} /> {online.searching ? 'Finding opponent...' : isPrivateInvite ? 'Join private camera room' : 'Start camera match'}
-            </button>
-            {online.connected ? (
-              <button className="leave-button" onClick={leaveCameraMatch}>
-                <LogOut size={16} /> Leave match
-              </button>
-            ) : null}
-            {online.error ? <div className="panel-error">{online.error}</div> : null}
-          </section>
-
-          <section className="panel-card time-control-card">
-            <div className="panel-title">Time Control (local)</div>
-            <div className="time-presets">
-              {[{label:"5+0", minutes:5, increment:0},{label:"10+5", minutes:10, increment:5},{label:"15+10", minutes:15, increment:10},{label:"∞", minutes:0, increment:0}].map(tc => (
-                <button
-                  key={tc.label}
-                  className={`time-preset-btn ${timeControl.minutes === tc.minutes && timeControl.increment === tc.increment ? 'active' : ''}`}
-                  onClick={() => {
-                    const newTC = { minutes: tc.minutes, increment: tc.increment };
-                    setTimeControl(newTC);
-                    const total = tc.minutes * 60;
-                    setWhiteTime(total);
-                    setBlackTime(total);
-                    setActiveColor('white');
-                  }}
-                >
-                  {tc.label}
-                </button>
-              ))}
-            </div>
-          </section>
-          <section className="video-grid" aria-label="Camera previews">
-            <div className="video-tile remote">
-              <video ref={remoteVideoRef} autoPlay playsInline />
-              {!online.opponentConnected ? <div className="video-empty"><VideoOff size={20} /> Waiting for stranger</div> : null}
-            </div>
-            <div className="video-tile local">
-              <video ref={localVideoRef} autoPlay muted playsInline />
-              {!cameraEnabled ? <div className="video-empty"><Video size={20} /> Camera off</div> : null}
-            </div>
-          </section>
-
-          <section className="panel-card result-card">
-            <div className="panel-title">Game</div>
-            {gameResult ? (
-              <div>
-                <div className="result-banner">{gameResult}</div>
-                {online.opponentConnected && (
-                  <button
-                    className="match-button"
-                    style={{marginTop: '8px', background: '#4a7c59'}}
-                    onClick={() => sendRealtime({ type: 'rematch' })}
-                  >
-                    Rematch
-                  </button>
-                )}
-              </div>
-            ) : (
-              <div className="panel-muted">
-                {isOnlineMode
-                  ? online.opponentConnected
-                    ? onlineMovePending
-                      ? 'Move sent. Waiting for server validation.'
-                      : 'Synced online match. Webcam is peer-to-peer; moves are server validated.'
-                    : 'Camera is ready. Waiting for another player.'
-                  : 'Local test board. Start a camera match to play a stranger online.'}
-              </div>
-            )}
-          </section>
-
-          <section className="panel-card move-card">
-            <div className="panel-title">Moves</div>
-            <MovesList moves={visibleMoves} />
-          </section>
-        </aside>
-      </main>
-    </div>
-  );
+          <GamePanel isOnlineMode={isOnlineMode} />
+          <GamePanel isOnlineMode={isOnlineMode} />
+        </main>
+      </div>
+    );
+  }
 }
 
-function formatTime(seconds: number): string {
+function formatTime(seconds: number, inc = 0): string {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
+  let s = `${mins}:${secs.toString().padStart(2, '0')}`;
+  if (inc > 0) s += ` (+${inc}s)`;
+  return s;
 }
 
 function PlayerStrip({ name, label, tone, timeLeft }: { name: string; label: string; tone: 'light' | 'dark'; timeLeft?: number; }) {
@@ -533,25 +615,43 @@ function PlayerStrip({ name, label, tone, timeLeft }: { name: string; label: str
 }
 
 function moveText(move?: MoveRecord) {
-  if (!move) return '';
-  if ('san' in move && typeof move.san === 'string') return move.san;
-  if ('lastMove' in move && typeof move.lastMove === 'string') return move.lastMove;
-  return '';
+  if (!move) return "";
+  if ("san" in move && typeof move.san === "string") return move.san;
+  if ("lastMove" in move && typeof move.lastMove === "string") return move.lastMove;
+  return "";
 }
 
-function MovesList({ moves }: { moves: MoveRecord[] }) {
+function MovesList({ moves, onJumpTo, isLocal, currentIndex }: { moves: MoveRecord[]; onJumpTo?: (idx: number | null) => void; isLocal?: boolean; currentIndex?: number | null }) {
   if (moves.length === 0) return <div className="empty-moves">No moves yet</div>;
+
+  const handleJump = (moveIdx: number) => {
+    if (onJumpTo && isLocal) onJumpTo(moveIdx);
+  };
 
   return (
     <div className="moves-table">
       {Array.from({ length: Math.ceil(moves.length / 2) }).map((_, row) => {
         const white = moves[row * 2];
         const black = moves[row * 2 + 1];
+        const whiteIdx = row * 2;
+        const blackIdx = row * 2 + 1;
         return (
           <div className="move-row" key={row}>
             <span className="move-index">{row + 1}</span>
-            <span>{moveText(white)}</span>
-            <span>{moveText(black)}</span>
+            <span 
+              className={isLocal && onJumpTo ? "clickable-move" : ""}
+              onClick={() => handleJump(whiteIdx)}
+              title={isLocal ? "Click to view this position" : ""}
+            >
+              {moveText(white)}
+            </span>
+            <span 
+              className={isLocal && onJumpTo && black ? "clickable-move" : ""}
+              onClick={() => black && handleJump(blackIdx)}
+              title={isLocal ? "Click to view this position" : ""}
+            >
+              {moveText(black)}
+            </span>
           </div>
         );
       })}

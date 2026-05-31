@@ -178,10 +178,8 @@ function handleRematch(client: Client) {
   const room = getRoom(client.roomCode);
   if (!room) return;
 
-  // Reset game
+  // Reset game while preserving time control settings
   room.game.reset();
-  room.whiteTime = 5 * 60; // or from stored timeControl if we had it
-  room.blackTime = 5 * 60;
   room.lastMoveTimestamp = Date.now();
 
   const payload = {
@@ -217,7 +215,7 @@ function makeMove(client: Client, message: ClientMessage) {
     // Real chess clock logic (chess.com style)
     const now = Date.now();
     const elapsed = Math.floor((now - room.lastMoveTimestamp) / 1000);
-    const inc = room.increment;
+    const inc = room.increment || 0;
 
     if (player.color === 'white') {
       room.whiteTime = Math.max(0, room.whiteTime - elapsed) + inc;
@@ -259,6 +257,34 @@ function handleResign(client: Client) {
   broadcast(room, { type: 'game-over', reason: 'resignation', winner });
   console.log(`[Server] ${player.color} resigned in ${room.code}`);
 }
+
+function handleOfferDraw(client: Client) {
+  const room = getRoom(client.roomCode);
+  if (!room) return send(client, { type: 'error', message: 'Room not found.' });
+  const opponent = getOpponent(client);
+  if (opponent) {
+    send(opponent, { type: 'draw-offer' });
+    console.log(`[Server] Draw offer from ${client.id} in ${room.code}`);
+  }
+}
+
+function handleAcceptDraw(client: Client) {
+  const room = getRoom(client.roomCode);
+  if (!room) return;
+  const opponent = getOpponent(client);
+  if (opponent) send(opponent, { type: 'draw-accepted' });
+  broadcast(room, { type: 'game-over', reason: 'draw', winner: undefined });
+  console.log(`[Server] Draw accepted in ${room.code}`);
+}
+
+function handleDeclineDraw(client: Client) {
+  const room = getRoom(client.roomCode);
+  if (!room) return;
+  const opponent = getOpponent(client);
+  if (opponent) send(opponent, { type: 'draw-declined' });
+  console.log(`[Server] Draw declined in ${room.code}`);
+}
+
 function forwardToOpponent(client: Client, message: ClientMessage) {
   const opponent = getOpponent(client);
   if (opponent) send(opponent, { type: message.type, from: client.id, payload: message.payload });
@@ -288,6 +314,15 @@ function handleClientMessage(client: Client, message: ClientMessage) {
       break;
     case 'rematch':
       handleRematch(client);
+      break;
+    case 'offer-draw':
+      handleOfferDraw(client);
+      break;
+    case 'accept-draw':
+      handleAcceptDraw(client);
+      break;
+    case 'decline-draw':
+      handleDeclineDraw(client);
       break;
     default:
       send(client, { type: 'error', message: `Unknown message type: ${message.type}` });

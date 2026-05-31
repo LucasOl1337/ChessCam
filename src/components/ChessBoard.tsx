@@ -5,10 +5,10 @@ import type { Move as ChessMove, Square } from 'chess.js';
 import { ChessEngine, type PromotionPiece } from '../chess/chessEngine';
 
 const PIECE_SYMBOLS: Record<PromotionPiece, { w: string; b: string }> = {
-  q: { w: '?', b: '?' },
-  r: { w: '?', b: '?' },
-  b: { w: '?', b: '?' },
-  n: { w: '?', b: '?' },
+  q: { w: '♕', b: '♛' },
+  r: { w: '♖', b: '♜' },
+  b: { w: '♗', b: '♝' },
+  n: { w: '♘', b: '♞' },
 };
 
 interface ChessBoardProps {
@@ -19,6 +19,7 @@ interface ChessBoardProps {
   playerColor?: 'white' | 'black';
   onMoveRequest?: (from: Square, to: Square, promotion?: PromotionPiece) => void;
   disabled?: boolean;
+  arrows?: Array<{ from: string; to: string; color?: string }>; // for analysis arrows (chess.com style)
 }
 
 const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -32,6 +33,7 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
   playerColor,
   onMoveRequest,
   disabled = false,
+  arrows = [],
 }) => {
   const [engine] = React.useState(() => new ChessEngine());
   const [fen, setFen] = React.useState(() => externalFen || engine.getFen());
@@ -263,7 +265,49 @@ export const ChessBoard: React.FC<ChessBoardProps> = ({
 
       <div className="board-frame">
         <Chessboard options={boardOptions} />
-        {activePendingPromotion && (
+          
+          {/* Analysis arrows overlay (chess.com style) */}
+          {arrows.length > 0 && (
+            <svg 
+              className="analysis-arrows" 
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10 }}
+              viewBox="0 0 100 100" 
+              preserveAspectRatio="none"
+            >
+              {arrows.map((arrow, i) => {
+                const fromFile = 'abcdefgh'.indexOf(arrow.from[0]);
+                const fromRank = 8 - parseInt(arrow.from[1]);
+                const toFile = 'abcdefgh'.indexOf(arrow.to[0]);
+                const toRank = 8 - parseInt(arrow.to[1]);
+                
+                const x1 = (fromFile + 0.5) * (100/8);
+                const y1 = (fromRank + 0.5) * (100/8);
+                const x2 = (toFile + 0.5) * (100/8);
+                const y2 = (toRank + 0.5) * (100/8);
+                
+                const color = arrow.color || '#4a90e2';
+                
+                return (
+                  <g key={i}>
+                    <defs>
+                      <marker id={`arrowhead-${i}`} markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill={color} />
+                      </marker>
+                    </defs>
+                    <line 
+                      x1={x1} y1={y1} x2={x2} y2={y2} 
+                      stroke={color} 
+                      strokeWidth="2" 
+                      strokeOpacity="0.85"
+                      markerEnd={`url(#arrowhead-${i})`}
+                    />
+                  </g>
+                );
+              })}
+            </svg>
+          )}
+
+          {activePendingPromotion && (
           <div className="promotion-overlay">
             <div className="promotion-dialog" role="dialog" aria-label="Choose promotion piece">
               <div className="promotion-title">Promote to</div>

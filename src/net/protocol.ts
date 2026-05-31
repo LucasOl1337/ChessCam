@@ -6,7 +6,7 @@
 export type ClientMessage =
   | { type: 'join-room'; roomCode?: string }
   | { type: 'make-move'; move: { from: string; to: string; promotion?: string } }
-  | { type: 'offer-draw' | 'accept-draw' | 'resign' }
+  | { type: 'offer-draw' | 'accept-draw' | 'decline-draw' | 'resign' }
   | { type: 'webrtc-offer' | 'webrtc-answer' | 'ice-candidate'; payload: unknown };
 
 export type ServerMessage =

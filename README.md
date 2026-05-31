@@ -71,3 +71,37 @@ export default defineConfig([
   },
 ])
 ```
+
+
+## ChessCam - Chess + Live Camera
+
+Jogue xadrez com recursos inspirados no chess.com + vídeo P2P.
+
+### Features de Gameplay (Melhorias recentes)
+- **History Scrub / Analysis**: Clique nos lances na lista de moves (local) para rever posições. Botões de navegação ⏮ ◀ ▶ ⏭ Live. (Novo na rodada!)
+- **Material / Captured**: Mostra contagem básica de peças capturadas.
+- **Draw Offers completo**: Botão Offer Draw, prompts de aceite/recusa, funciona local e online (com server/worker).
+- **Resign**: Botão dedicado, encerra o jogo corretamente.
+- **Promoção melhorada**: Diálogo com símbolos unicode bonitos ♕♛ etc.
+- Clocks com time controls, increment, timeout.
+- Sons chess.com-like (move/capture/check...).
+- Move list SAN, last-move highlights, legal dots, check indicator.
+- Online camera matches com WebRTC vídeo + WS moves authoritativos.
+
+### Como rodar
+```bash
+npm install
+npm run dev:full
+```
+Abra http://localhost:5173 (ou o Vite). Use outra aba para simular oponente.
+
+Para deploy worker: `npm run worker:deploy`
+
+### Roadmap / Próximas melhorias
+- PGN/FEN export + import
+- Board flip + themes
+- Keyboard shortcuts
+- Melhor engine analysis (Stockfish WASM em rodada futura)
+- Premoves, variações, etc.
+
+Feito com React + chess.js + react-chessboard + Cloudflare Workers + WebRTC.

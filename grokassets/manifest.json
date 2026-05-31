@@ -1,0 +1,15 @@
+﻿{
+    "project":  "ChessCam",
+    "campaign":  "grokassets",
+    "generatedAt":  "2026-05-31",
+    "status":  "structure-created",
+    "visualTheme":  "",
+    "assets":  [
+                   {
+                       "path":  "logos/primary/horizontal/dark/chesscam-primary-logo-1920.jpg",
+                       "promptFile":  "prompts/2026-05-31-loop-round3.md",
+                       "type":  "primary-logo",
+                       "notes":  "Round 3 - chess + vision"
+                   }
+               ]
+}
