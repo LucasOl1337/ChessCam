@@ -1,0 +1,120 @@
+﻿import React from "react";
+import { Camera } from "lucide-react";
+import { ChessBoard } from "./components/ChessBoard";
+import { GamePanel } from "./components/GamePanel";
+
+export default function App() {
+  const [screen, setScreen] = React.useState<"landing" | "game">("landing");
+  const [gameMode, setGameMode] = React.useState<"local" | "online">("local");
+  const [moves, setMoves] = React.useState<any[]>([]);
+  const [_gameResult, setGameResult] = React.useState<string | null>(null);
+  const [roomCode, setRoomCode] = React.useState<string | undefined>();
+
+  const isOnlineMode = gameMode === "online";
+
+  const handleStartLocal = () => {
+    setGameMode("local");
+    setScreen("game");
+  };
+
+  const handleStartCamera = () => {
+    setGameMode("online");
+    setRoomCode(Math.random().toString(36).substring(2, 8).toUpperCase());
+    setScreen("game");
+  };
+
+  if (screen === "landing") {
+    return (
+      <div className="landing-overlay">
+        <div className="landing-card">
+          <div className="landing-brand">
+            <Camera size={32} />
+            <div>
+              <div className="landing-title">ChessCam</div>
+              <div className="landing-subtitle">Play chess. Meet live.</div>
+            </div>
+          </div>
+
+          <div className="landing-options">
+            <button className="landing-option local" onClick={handleStartLocal}>
+              <div className="opt-icon">♟︎</div>
+              <div>
+                <div className="opt-title">Local Game</div>
+                <div className="opt-desc">Play on this device • Pass & play</div>
+              </div>
+            </button>
+
+            <button className="landing-option online" onClick={handleStartCamera}>
+              <div className="opt-icon">📷</div>
+              <div>
+                <div className="opt-title">Camera Match</div>
+                <div className="opt-desc">Webcam • Play against a real stranger live</div>
+              </div>
+              <div className="opt-badge">Recommended</div>
+            </button>
+          </div>
+
+          <div className="landing-hint">You can always switch modes later</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="app-shell">
+      <header className="topbar">
+        <div className="brand-lockup">
+          <div className="brand-mark"><Camera size={18} /></div>
+          <div>
+            <div className="brand-name">ChessCam</div>
+            <div className="brand-subtitle">Play chess. Meet live.</div>
+          </div>
+        </div>
+        <div className="topbar-status">
+          <span className={`status-dot ${isOnlineMode ? "live" : ""}`} />
+          {isOnlineMode ? "Camera match" : "Local board"}
+        </div>
+      </header>
+
+      <main className="game-layout">
+        <section className="board-column">
+          <div className="player-strip dark">
+            <div className="player-avatar">B</div>
+            <div className="player-meta">
+              <div className="player-name">{isOnlineMode ? "Opponent" : "Guest"}</div>
+              <div className="player-label">black</div>
+            </div>
+            <div className="player-clock">10:00</div>
+          </div>
+
+          <ChessBoard
+            key={isOnlineMode ? "online" : "local"}
+            onGameOver={setGameResult}
+            onMove={(m: any) => setMoves(prev => [...prev, m])}
+            onReset={() => { setMoves([]); setGameResult(null); }}
+            disabled={false}
+          />
+
+          <div className="player-strip light">
+            <div className="player-avatar">W</div>
+            <div className="player-meta">
+              <div className="player-name">You</div>
+              <div className="player-label">white</div>
+            </div>
+            <div className="player-clock">10:00</div>
+          </div>
+        </section>
+
+        <GamePanel 
+          isOnlineMode={isOnlineMode} 
+          roomCode={roomCode}
+          moves={moves}
+          onStartCameraMatch={() => setRoomCode(Math.random().toString(36).substring(2, 8).toUpperCase())}
+          onOfferDraw={() => {}}
+          onResign={() => {}}
+          onFlipBoard={() => {}}
+        />
+      </main>
+    </div>
+  );
+}

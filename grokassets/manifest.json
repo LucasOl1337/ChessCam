@@ -10,6 +10,24 @@
                        "promptFile":  "prompts/2026-05-31-loop-round3.md",
                        "type":  "primary-logo",
                        "notes":  "Round 3 - chess + vision"
+                   },
+                   {
+                       "path":  "content/illustrations/chesscam-ar-analysis.jpg",
+                       "promptFile":  "prompts/2026-05-31-loop-round10.md",
+                       "type":  "feature-illustration",
+                       "notes":  "Round 10 - AR analysis overlay"
+                   },
+                   {
+                       "path":  "banners/marketing/pitch-deck/chesscam-pitch-slide-background.jpg",
+                       "promptFile":  "prompts/2026-05-31-loop-round12.md",
+                       "type":  "pitch-deck",
+                       "notes":  "Round 12 - chess + vision pitch background"
+                   },
+                   {
+                       "path":  "content/illustrations/chesscam-ui-mockup-and-loading.jpg",
+                       "promptFile":  "prompts/2026-05-31-loop-round12.md",
+                       "type":  "ui-mockup-loading",
+                       "notes":  "Round 12 - UI mockup + loading state"
                    }
                ]
 }
