@@ -866,3 +866,390 @@ button {
   color: #666;
   margin-top: 8px;
 }
+
+/* === Premium Landing Page (bacana / chess.com inspired) === */
+.landing-overlay {
+  background: linear-gradient(145deg, #0c0c0b 0%, #11110f 100%);
+  padding: 24px;
+}
+
+.landing-card.premium {
+  background: #181715;
+  border: 1px solid #2e2c28;
+  border-radius: 20px;
+  padding: 42px 48px;
+  max-width: 620px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.03) inset;
+  text-align: center;
+}
+
+.landing-hero {
+  margin-bottom: 28px;
+}
+
+.brand-with-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+
+.brand-mark.large {
+  width: 62px;
+  height: 62px;
+  font-size: 32px;
+  background: linear-gradient(135deg, #9ed36f, #6aa13d);
+  color: #0f120a;
+  box-shadow: 0 8px 20px rgba(129,182,76,.3), inset 0 -3px 0 rgba(0,0,0,.2);
+}
+
+.landing-title {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.landing-subtitle {
+  font-size: 15px;
+  color: #9a9589;
+}
+
+.landing-tagline {
+  font-size: 13.5px;
+  color: #777;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+/* Big prominent Quick Game button */
+.quick-game-cta {
+  width: 100%;
+  height: 64px;
+  font-size: 18px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #9ed36f, #6aa13d);
+  color: #0f120a;
+  border: 0;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(129,182,76,.35);
+  transition: transform .1s ease, box-shadow .1s ease;
+  position: relative;
+}
+
+.quick-game-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px rgba(129,182,76,.45);
+}
+
+.quick-badge {
+  position: absolute;
+  top: -9px;
+  right: 22px;
+  background: #0f120a;
+  color: #c5e8b0;
+  font-size: 10px;
+  padding: 1px 9px;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+
+.landing-divider {
+  margin: 26px 0 18px;
+  font-size: 12px;
+  color: #555;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Choice cards grid */
+.landing-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.choice-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: #22201d;
+  border: 1px solid #34322e;
+  border-radius: 14px;
+  padding: 16px 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: all .12s ease;
+  color: inherit;
+  font: inherit;
+}
+
+.choice-card:hover {
+  border-color: #5a8f4e;
+  background: #282623;
+  transform: translateY(-2px);
+}
+
+.choice-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  background: #2c2a27;
+  border-radius: 10px;
+  color: #9ed36f;
+}
+
+.choice-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.choice-title {
+  font-size: 15.5px;
+  font-weight: 700;
+  margin-bottom: 3px;
+  color: #f5f3ee;
+}
+
+.choice-desc {
+  font-size: 12.5px;
+  color: #88847a;
+  line-height: 1.35;
+}
+
+.choice-sub {
+  font-size: 11px;
+  color: #6aa13d;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.landing-footer {
+  margin-top: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.tech-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tech-badges span {
+  font-size: 10.5px;
+  padding: 2px 9px;
+  background: #22201d;
+  border: 1px solid #34322e;
+  border-radius: 999px;
+  color: #777;
+}
+
+.ghost-btn {
+  background: transparent;
+  border: 1px solid #444;
+  color: #888;
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.ghost-btn:hover {
+  color: #ddd;
+  border-color: #666;
+}
+
+@media (max-width: 640px) {
+  .landing-choices { grid-template-columns: 1fr; }
+  .landing-card.premium { padding: 28px 22px; }
+}
+
+/* === GamePanel + Game UI Polish (chess.com-inspired) === */
+.game-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ddd;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.panel-kicker {
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.room-code-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.room-code {
+  font-family: monospace;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  background: #111;
+  padding: 4px 10px;
+  border-radius: 6px;
+  color: #f0f0ee;
+}
+
+.match-button {
+  width: 100%;
+  background: #2a3f1f;
+  color: #c5e8b0;
+  border: 1px solid #3a5f2e;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.match-button:hover {
+  background: #3a5f2e;
+  border-color: #5a8f4e;
+}
+
+.time-preset-btn {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.time-preset-btn:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.draw-button, .resign-button {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.draw-button {
+  background: #2a2a27;
+  color: #ddd;
+  border-color: #444;
+}
+
+.draw-button:hover {
+  background: #383833;
+}
+
+.resign-button {
+  background: #3a1f1f;
+  color: #f0b0b0;
+  border-color: #5f2e2e;
+}
+
+.resign-button:hover {
+  background: #5f2e2e;
+}
+
+.empty-moves {
+  color: #666;
+  font-style: italic;
+  padding: 4px 0;
+}
+
+/* Player strips polish */
+.player-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1c1c1a;
+  padding: 6px 10px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.player-avatar {
+  width: 28px;
+  height: 28px;
+  background: #333;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.player-meta {
+  flex: 1;
+}
+
+.player-name {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.player-label {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.player-clock {
+  font-family: monospace;
+  font-size: 15px;
+  font-weight: 700;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  min-width: 58px;
+  text-align: center;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
