@@ -1,152 +1,258 @@
-# Patchnotes - ChessCam - 2026-05-31
+# Patch Notes - 2026-06-02 Safe Sync (PC vs GitHub Research)
+
+**Project:** ChessCam (Chess + camera AI analysis app (Vite+TS+React frontend, server, wrangler))
+**Path:** C:\Projetos\ChessCam
+**Branch:** master (push: origin)
+**Generated:** 2026-06-02 11:42:57
+**State:** ahead2+docs | Pre-rebase state: ahead2+docs | Ahead/Behind post: +2 / -0
 
 ## Executive Summary
+Batch safe commit for projects with 24h activity (file mods, commits, dirty tree, or agent-driven patch/changelog touches). Research performed locally via git (fetch, rev-list, diff, status, stash/rebase) comparing current PC working tree + HEAD against GitHub remote (origin/master).
 
-This is part of the 18-project safe sync batch (2026-05-31). ChessCam (https://github.com/LucasOl1337/ChessCam.git on **master** branch) had the highest interesting parallel work among complex projects: heavy refactors and feature expansions for the chess cam / video AI realtime platform.
+This snapshot captures all local mutations since last synced safe commit (typically 05-31). Includes work from parallel agent sessions (Grok, Claude, sub-agents, /loop etc.). Conflicts (if any during rebase to integrate latest GitHub) were resolved preferring **--ours (PC/local version)** to preserve the authoritative state on this machine.
 
-Prior state: "dirty safe commit" + grokassets/ introduced by agents. Current: 10 uncommitted files (README, server/index.ts, src/App.tsx, src/components/ChessBoard.tsx, src/index.css, src/net/protocol.ts, worker/src/index.ts + .codegraph/ untracked + grokassets expansion).
+Key stats: 24h commits present=no, dirty=yes, stashed=True, rebased=False, conflicts-resolved=False, rebase-aborted=False.
 
-**Key accomplishments by parallel agents in this session:**
-- Full authoritative chess clocks with increment (chess.com style) in both local server and Cloudflare Worker (Durable Object).
-- Complete Draw Offer flow (offer/accept/decline) + dedicated Resign + Rematch support (local + online synced).
-- History Scrub / Analysis mode: click moves list or nav buttons (⏮ ◀ ▶ ⏭ Live) to review positions locally; FEN/PGN copy buttons.
-- Material/Captured pieces display (unicode ♟ etc).
-- Enhanced promotion dialog with beautiful unicode symbols (♕♛ etc).
-- WebRTC P2P video + WS signaling fully wired in App + server/worker for live camera matches (quick or private room).
-- Keyboard shortcuts (arrows/z for scrub, f flip, r resign, d/? draw).
-- Time control presets UI (5+0, 10+5, 15+10, ∞).
-- Major polish to ChessBoard (externalFen for online, analysis arrows SVG overlay, improved selection/legal dots, disabled states).
-- Protocol and CSS expanded for all new flows and chess.com-inspired dark/green theme.
-- README updated with full features + how-to.
-- Agent artifacts: .codegraph/ (CodeGraph AST index for deep symbol tracing in chess logic) + full grokassets/ structure.
+## Local PC vs GitHub Comparison (Post-Reconciliation Research)
 
-All changes source-only. No hard conflicts in batch. Ready for safe commit.
+| Aspect | PC (Local) | GitHub (origin) | Notes |
+|--------|------------|---------------------|-------|
+| HEAD | 6a20e3b | 4dd3867 | Post-rebase if applied |
+| Branch tracking | master | origin/master | |
+| Ahead / Behind | +2 | -0 | 0/0 ideal after rebase |
+| Working tree | dirty (72 lines) | (remote clean by definition) | Uncommitted on PC |
+| Unique commits (24h) | 0 listed | See div below | |
+| Divergence PC-only commits | 2 | - | These + uncommitted = what we commit |
+| Divergence GH-only | - | 0 | Integrated via rebase (or ignored if aborted) |
 
-## Local vs Remote Comparison
+### Commits unique to PC (will be part of this safe commit or already in HEAD)
+- 6a20e3b feat(landing): landing page bacana premium com bot├úo Jogo R├ípido grande + 4 op├º├Áes claras de in├¡cio
+- c67de74 fix(chess): syntax App.tsx + upgraded analysis to alpha-beta minimax depth 5
 
-| Item                  | Value                                      |
-|-----------------------|--------------------------------------------|
-| Branch                | master (unique in this batch; note vs main siblings) |
-| Local HEAD            | 96a8eb6abb5503ea4983db08c30241ed5f483339 (feat: deploy ChessCam to Cloudflare) |
-| Remote HEAD (origin)  | 96a8eb6abb5503ea4983db08c30241ed5f483339 (from FETCH_HEAD) |
-| Working Tree          | DIRTY (10 uncommitted per prompt: 7+ modified tracked source + untracked .codegraph/ + grokassets substructure) |
-| Ahead / Behind        | 0 commits ahead / 0 behind (at HEAD after prior dirty safe commit) |
-| Sync Status           | IN SYNC at commit level; dirty working directory + new untracked (common "dirty safe commit + grokassets" batch pattern) |
-| Recent Log Entry      | 2026-05-29 era commits in .git/logs/HEAD; FETCH confirms no newer remote |
-| Divergence Notes      | No local commits since last safe commit. All activity = WD edits by parallel agents. .git/config confirms origin https://github.com/LucasOl1337/ChessCam.git + master tracking. |
+### Commits only on GitHub (fetched, integrated where possible)
+(none - PC was at or ahead of remote at research time)
 
-**Fetch not re-run in this agent pass (no exec tool available); state inferred from .git/HEAD, .git/logs/HEAD (7 entries total history), .git/FETCH_HEAD, .git/config, and explicit prompt listing of 10 uncommitted.**
+### Recent 24h local commits (full subjects + relative time)
+  (no new commits in last 24h; changes are uncommitted or from prior)
 
-## Uncommitted Changes Summary (Categorized by Agents' Parallel Work)
+### Pending uncommitted changes on PC (porcelain post-rebase/pop)
+```
+M changelog.md
+ M grokassets/manifest.json
+ M patchnotes.md
+ M src/index.css
+?? grokassets/BRAND-USAGE-GUIDELINES.md
+?? grokassets/banners/marketing/pitch-deck/bg-v1.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v10.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v11.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v12.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v13.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v14.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v15.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v16.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v17.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v18.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v19.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v2.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v20.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v21.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v22.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v23.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v24.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v25.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v26.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v27.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v28.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v3.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v4.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v5.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v6.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v7.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v8.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v9.svg
+?? grokassets/banners/social/x-header/chesscam-x-template-1.svg
+?? grokassets/banners/social/x-header/chesscam-x-template-2.svg
+?? grokassets/banners/social/x-header/chesscam-x-template-3.svg
+?? grokassets/banners/social/x-header/chesscam-x-template-4.svg
+?? grokassets/banners/social/x-header/chesscam-x-template-5.svg
+?? grokassets/banners/social/x-header/chesscam-x-template-6.svg
+?? grokassets/banners/social/x-header/chesscam-x-template-7.svg
+?? grokassets/banners/social/x-header/chesscam-x-template-8.svg
+?? grokassets/banners/social/x-header/chesscam-x-template-9.svg
+?? grokassets/content/illustrations/chesscam-ar-analysis-additional-05.jpg
+?? grokassets/content/illustrations/chesscam-ar-analysis-additional-06.jpg
+?? grokassets/content/illustrations/chesscam-visual-1.svg
+?? grokassets/content/illustrations/chesscam-visual-10.svg
+?? grokassets/content/illustrations/chesscam-visual-11.svg
+?? grokassets/content/illustrations/chesscam-visual-12.svg
+?? grokassets/content/illustrations/chesscam-visual-13.svg
+?? grokassets/content/illustrations/chesscam-visual-14.svg
+?? grokassets/content/illustrations/chesscam-visual-15.svg
+?? grokassets/content/illustrations/chesscam-visual-16.svg
+?? grokassets/content/illustrations/chesscam-visual-17.svg
+?? grokassets/content/illustrations/chesscam-visual-18.svg
+?? grokassets/content/illustrations/chesscam-visual-19.svg
+?? grokassets/content/illustrations/chesscam-visual-2.svg
+?? grokassets/content/illustrations/chesscam-visual-20.svg
+?? grokassets/content/illustrations/chesscam-visual-21.svg
+?? grokassets/content/illustrations/chesscam-visual-22.svg
+?? grokassets/content/illustrations/chesscam-visual-3.svg
+?? grokassets/content/illustrations/chesscam-visual-4.svg
+?? grokassets/content/illustrations/chesscam-visual-5.svg
+?? grokassets/content/illustrations/chesscam-visual-6.svg
+?? grokassets/content/illustrations/chesscam-visual-7.svg
+?? grokassets/content/illustrations/chesscam-visual-8.svg
+?? grokassets/content/illustrations/chesscam-visual-9.svg
+?? grokassets/logos/primary/horizontal/dark/chesscam-logo-h-dark.svg
+?? grokassets/motion/
+?? grokassets/prompts/2026-05-31-chesscam-ar-analysis-illustrations.md
+?? grokassets/prompts/2026-05-31-chesscam-camera-ar-analysis.md
+?? grokassets/prompts/2026-05-31-chesscam-realtime-ar-game-sequence.md
+?? grokassets/prompts/2026-05-31-chesscam-youtube-channel-art.md
+```
 
-**Modified Tracked Files (core engine + UI + protocol + docs):**
-- README.md
-- server/index.ts
-- src/App.tsx
-- src/components/ChessBoard.tsx
-- src/index.css
-- src/net/protocol.ts
-- worker/src/index.ts
+### Diff stat (unstaged work to be snapshotted)
+```
+changelog.md             |   77 +-
+ grokassets/manifest.json |   42 +-
+ patchnotes.md            |  284 ++--
+ src/index.css            | 3900 ++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 4177 insertions(+), 126 deletions(-)
+```
 
-**Untracked / New (agent artifacts + assets):**
-- .codegraph/ (codegraph.db + wal/shm — CodeGraph MCP server index for symbol/edge queries across chess engine, WS protocol, components)
-- grokassets/ full tree (banners/marketing+social, content/, exports/, icons/app+feature+social, logos/ variants, manifest.json, motion/, prompts/, README.md, visual-bible.md) — cross-project branding campaign
+### Untracked files
+```
+grokassets/BRAND-USAGE-GUIDELINES.md
+grokassets/banners/marketing/pitch-deck/bg-v1.svg
+grokassets/banners/marketing/pitch-deck/bg-v10.svg
+grokassets/banners/marketing/pitch-deck/bg-v11.svg
+grokassets/banners/marketing/pitch-deck/bg-v12.svg
+grokassets/banners/marketing/pitch-deck/bg-v13.svg
+grokassets/banners/marketing/pitch-deck/bg-v14.svg
+grokassets/banners/marketing/pitch-deck/bg-v15.svg
+grokassets/banners/marketing/pitch-deck/bg-v16.svg
+grokassets/banners/marketing/pitch-deck/bg-v17.svg
+grokassets/banners/marketing/pitch-deck/bg-v18.svg
+grokassets/banners/marketing/pitch-deck/bg-v19.svg
+grokassets/banners/marketing/pitch-deck/bg-v2.svg
+grokassets/banners/marketing/pitch-deck/bg-v20.svg
+grokassets/banners/marketing/pitch-deck/bg-v21.svg
+grokassets/banners/marketing/pitch-deck/bg-v22.svg
+grokassets/banners/marketing/pitch-deck/bg-v23.svg
+grokassets/banners/marketing/pitch-deck/bg-v24.svg
+grokassets/banners/marketing/pitch-deck/bg-v25.svg
+grokassets/banners/marketing/pitch-deck/bg-v26.svg
+grokassets/banners/marketing/pitch-deck/bg-v27.svg
+grokassets/banners/marketing/pitch-deck/bg-v28.svg
+grokassets/banners/marketing/pitch-deck/bg-v3.svg
+grokassets/banners/marketing/pitch-deck/bg-v4.svg
+grokassets/banners/marketing/pitch-deck/bg-v5.svg
+grokassets/banners/marketing/pitch-deck/bg-v6.svg
+grokassets/banners/marketing/pitch-deck/bg-v7.svg
+grokassets/banners/marketing/pitch-deck/bg-v8.svg
+grokassets/banners/marketing/pitch-deck/bg-v9.svg
+grokassets/banners/social/x-header/chesscam-x-template-1.svg
+... (truncated)
+```
 
-**Total per prompt:** ~10 uncommitted (source + artifacts).
+### Change categorization (inferred from paths)
+docs: patchnotes.md (1) | untracked-root: grokassets/BRAND-USAGE-GUIDELINES.md, grokassets/banners/marketing/pitch-deck/bg-v1.svg, grokassets/banners/marketing/pitch-deck/bg-v10.svg... (70) | assets: grokassets/manifest.json, grokassets/BRAND-USAGE-GUIDELINES.md, grokassets/banners/marketing/pitch-deck/bg-v1.svg... (69) | root: src/index.css (1)
 
-## File Change Matrix
+### Remotes (full)
+```
+origin	https://github.com/LucasOl1337/ChessCam.git (fetch)
+origin	https://github.com/LucasOl1337/ChessCam.git (push)
+```
 
-| Category                  | Files                                      | Tech                  | Agent Impact |
-|---------------------------|--------------------------------------------|-----------------------|--------------|
-| Docs                      | README.md                                  | MD                    | Features list + roadmap |
-| Local Realtime Server     | server/index.ts                            | TS + express + ws + chess.js | Clocks, draw/resign/rematch, timeControl, WebRTC forward, room mgmt |
-| Cloudflare Worker (Prod)  | worker/src/index.ts                        | TS + DurableObject + chess.js | Mirrored full logic (time, draw flows, rematch, health) for deploy |
-| Client App / Orchestration| src/App.tsx (very large)                   | TSX + React 19 + framer + lucide + ws + WebRTC | Camera flow, video refs, realtime message handler (all new types), history scrub, analysis, shortcuts, time presets, draw UI, FEN/PGN, rematch |
-| Chess UI Component        | src/components/ChessBoard.tsx              | TSX + react-chessboard + chessEngine wrapper | externalFen sync, promotion unicode dialog, analysis arrows SVG, styles for last/selected/legal, online disabled states |
-| Styles                    | src/index.css                              | CSS + Tailwind v4     | Full chess.com theme: topbar, player strips/clocks, board-frame, video-grid, panel cards, draw-offer, promotion-overlay, history-nav, captured material |
-| Protocol Types            | src/net/protocol.ts                        | TS                    | Extended Client/Server messages for draw, rematch, time, resign (client uses richer in practice) |
-| Agent Infrastructure      | .codegraph/ (new) + grokassets/ (expanded) | SQLite + asset dirs   | Deep code navigation + visual identity (part of 18-project batch) |
+### git fetch output (abridged)
+```
 
-**Grand Total:** High change count for batch. Pure source + assets (no secrets, no runtime DB dumps).
+```
 
-## Detailed Categorized Changes (with Agent Diff Highlights)
+## Multi-Agent Parallel Work & Conflict Handling
+Many agents (Grok 4.3, Claude, specialized sub-agents, background loops, best-of-n, implement/review loops) operated in parallel across the 23 active projects.
+Observed artifacts: simultaneous edits to patchnotes.md/changelog.md (timestamp ~10:05), .codegraph/ db updates (indexing), source in Kamui/Yume/Terminal/Sennin/simple-ai/VideoGen/LUCA, heavy data/job writes (OmniVoiceDash), recent feature commits (nexarq ~40 commits with detailed feat/fix messages), .bak experiment files, agent handoff mds, heartbeat/state json.
 
-**1. Realtime Backend Hardening (server + worker parity)**
-- Time control support baked into room creation, makeMove (elapsed + inc), broadcast (whiteTime/blackTime in payloads).
-- Draw flow: offer-draw → draw-offer to opponent, accept/decline handlers + game-over draw.
-- Resign + rematch full roundtrips (server resets game, preserves times).
-- WebRTC signaling passthrough (offer/answer/ice) unchanged but now in richer context.
-- Quick-match vs join private room with timeControl param.
-- Cleanup + health endpoints.
+Reconciliation strategy used here:
+- git fetch --all to pull latest GitHub (other agents or CI may have pushed).
+- Stash uncommitted PC work.
+- Rebase onto origin/master (preferring GitHub base).
+- On CONFLICT: checkout --ours + add (PC local wins for the snapshot of 'what is on this machine now').
+- Pop stash. This ensures the safe commit represents the authoritative PC reality on top of (or reconciled with) GitHub.
+- If rebase aborted: still proceed with commit of current PC tree (safe, no data loss).
+- Uniform detailed patchnotes + changelog written before the git add -A + commit.
 
-**2. Frontend Real-time Chess Cam Experience (App.tsx + ChessBoard)**
-- Full WebRTC peer + media stream for live opponent + self video in camera matches.
-- Online state machine with searching/opponentConnected/roomCode/color/fen/times.
-- History scrub ONLY local (externalFen from server for online authoritative view).
-- Analysis stub (heuristic import + eval bar) + FEN/PGN export.
-- Captured material computation from moves.
-- Keyboard global listener.
-- Time control UI affecting local clocks (online server authoritative).
-- Rich result banners + rematch button for online.
+No hard unresolvable conflicts left; state includes 'conflict-resolved' or 'rebase-aborted' flags where applicable. Cross-project overlaps (grokassets, AGENTS.md, brand, docs) handled by consistent formatting.
 
-**3. UI/UX Polish & Theme**
-- ChessBoard: promotion choices sorted, unicode symbols, arrows for future engine analysis, toolbar with turn/check.
-- CSS: dozens of new classes (player-clock low-time, video-tile, promotion-dialog, draw-offer, clickable-move, captured-row, history-nav, etc.). Deep --green chess palette + surfaces.
-
-**4. Documentation & Assets**
-- README: "Features de Gameplay (Melhorias recentes)" bullet list exactly matching new agent work.
-- grokassets + .codegraph as batch artifacts.
-
-## Multi-Agent Parallel Work Reconciliation
-
-**Context in 18-project batch (highest change counts + most interesting parallel work):** This batch followed prior "dirty safe commit" pattern + widespread introduction of grokassets/ by agents. ChessCam received focused attention as "heavy chess cam / video AI project".
-
-**Specific files edited by agents this session (reconciled here):**
-- **ChessBoard.tsx + App.tsx + protocol.ts + CSS:** Refactored for superior real-time chess vision: external state sync, P2P cam video alongside authoritative WS chess moves/clocks, full draw/resign/rematch, history scrub/analysis mode (clickable moves + nav), unicode promo, keyboard chess.com shortcuts, material balance, FEN/PGN tools. (Directly enables "jogue xadrez com recursos inspirados no chess.com + vídeo P2P".)
-- **server/index.ts + worker/src/index.ts:** Complete mirroring of new flows (time calc in makeMove, draw-offer/accept handlers, rematch reset, timeControl propagation in quick/join). Ensures local dev (tsx server) == prod worker (DurableObject) == client expectations. Bug in createRoom call sites noted but functional.
-- **README.md:** Updated post-feature to document exactly the new capabilities (history scrub, draw offers complete, material, resign, promo, clocks, sounds, online camera matches).
-- **.codegraph/ (new untracked):** CodeGraph MCP index (tree-sitter parsed knowledge graph of symbols/edges/calls) for fast structural queries on complex chess/WS logic — matches instructions in user .grok/Agents.md and .claude/Claude.md for this workspace.
-- **grokassets/ (expanded full structure):** Consistent with batch campaign (see root GROKASSETS-PLAN.md). Includes project-specific visual-bible.md (chess cam metaphors), icons/logos for brand, marketing banners, prompts for asset gen. Cross-project pattern: every major project (ChessCam, Kamui, LUCA-AI, Sennin/Maestro, simple-ai + 13 others) now has identical top-level grokassets/ layout populated with tailored content — unifying visual language without generic reuse.
-
-**Reconciliation notes vs prior parallel agents:**
-- No hard merge conflicts (batch note: "No hard merge conflicts").
-- Builds cleanly on "2026-05-29+dirty safe commit" baseline (log/FETCH confirm).
-- Agent edits were additive/enhancing (e.g. clocks + draw flows layered on existing WS/WebRTC skeleton).
-- Cross-project synergy: ChessCam realtime patterns (WS authoritative + P2P media) echo Kamui tether/health/echo services + simple-ai/NOVOFLUXO dashboard orchestration + Sennin Maestro whatsapp bridge + LUCA computer-use goblin. All now share grokassets visual identity.
-- .codegraph here aids future deep analysis (calls between ChessEngine/WS handlers/App state) similar to other complex projects.
-
-**Overall batch synthesis for ChessCam slice:** Parallel agents delivered a production-grade chess + live stranger camera match experience with pro features (clocks, draw offers, scrub) while maintaining dev/prod parity via dual server/worker. Highest fidelity "video AI" chess platform in the ecosystem.
-
-## Special Notes for Branch/Remote
-
-- **Branch anomaly:** master (confirmed in .git/HEAD + .git/config + .git/logs). All other assigned projects use main. Sennin uses custom codex/maestro-intelligence-hardening. Track this for future syncs.
-- Remote: https://github.com/LucasOl1337/ChessCam.git (origin). No other remotes.
-- No push performed (per explicit instructions). Only analysis + patch doc generation.
-- FETCH_HEAD / logs show clean alignment at last safe commit; all divergence = intentional uncommitted agent work + artifacts.
-- For safe commit: use consistent naming e.g. "2026-05-31+dirty safe commit" to match batch (Kamui/LUCA/etc used 2026-05-29+dirty variants).
-
-## Risk Assessment
-
-- **LOW RISK:** 100% hand-written source (TS/TSX/CSS/MD/JSON), no binaries/secrets/DBs in commit set. .codegraph/ is index (can be regenerated).
-- **Minor code smell:** App.tsx contains some JSX that appears to miss `return` statements in PlayerStrip/MovesList (render as undefined currently) — likely from rapid parallel edits; test before release but does not block safe commit of session state.
-- **Build/Dep:** Uses recent react 19, chess.js, react-chessboard, ws, express, wrangler — all declared. Vite + TS configs present.
-- **No integration breakage:** Changes self-contained to ChessCam realtime stack.
-- **Batch context:** Highest change volume but cleanest theme (chess cam focus).
-
-## Conclusion for Safe Commit
-
-All parallel agent work in this session for ChessCam is captured, categorized, and reconciled. 
-
-**Recommended next (by agent, no user action needed per policy):**
-1. (Already done) This patchnotes.md + updated changelog.md written + verified.
-2. Stage all (including grokassets/ + .codegraph? or .gitignore it).
-3. Commit: `git commit -m "2026-05-31+dirty safe commit — ChessCam realtime clocks + draw/resign + history scrub + cam P2P polish + .codegraph + grokassets"`
-4. (Do NOT push per instructions.)
-
-This preserves the most complete ready-to-use realtime chess vision + camera match result possible. Part of safe sync batch — no data loss across 18 projects.
+## Conclusion & Next
+PC version researched and documented vs GitHub. All qualifying mutations (code, docs, data from agent runs, experiments) staged for the **2026-06-02+ahead2+docs safe commit**.
+Push target: origin (may be backup/safe for non-primary forks or to avoid affecting public upstreams like sub2api).
+See changelog.md for the concise entry. Prior history preserved below the --- marker.
 
 ---
-*Generated: 2026-05-31 (PT) by specialized deep-analysis subagent*
-*Batch: 18-project safe sync — ChessCam, Kamui, LUCA-AI, Sennin (codex branch), simple-ai (NOVOFLUXO focus)*
-*References: .git/* metadata, full source reads of 7+ key files, grokassets list, .codegraph, prior patchnotes patterns from sibling projects (Yume, LUCA etc), GROKASSETS-PLAN.md*
-*No terminal commands executed; all via read/grep/list/write tools.*
+Prior patch history (preserved from file before overwrite of top section):
+
+# Patch Notes - 2026-06-02 Safe Sync (PC vs GitHub Research)
+
+**Project:** ChessCam (Chess + camera AI analysis app (Vite+TS+React frontend, server, wrangler))
+**Path:** C:\Projetos\ChessCam
+**Branch:** master (push: origin)
+**Generated:** 2026-06-02 11:39:05
+**State:** ahead2 | Pre-rebase state: ahead2 | Ahead/Behind post: +2 / -0
+
+## Executive Summary
+Batch safe commit for projects with 24h activity (file mods, commits, dirty tree, or agent-driven patch/changelog touches). Research performed locally via git (fetch, rev-list, diff, status, stash/rebase) comparing current PC working tree + HEAD against GitHub remote (origin/master).
+
+This snapshot captures all local mutations since last synced safe commit (typically 05-31). Includes work from parallel agent sessions (Grok, Claude, sub-agents, /loop etc.). Conflicts (if any during rebase to integrate latest GitHub) were resolved preferring **--ours (PC/local version)** to preserve the authoritative state on this machine.
+
+Key stats: 24h commits present=no, dirty=yes, stashed=True, rebased=False, conflicts-resolved=False, rebase-aborted=False.
+
+## Local PC vs GitHub Comparison (Post-Reconciliation Research)
+
+| Aspect | PC (Local) | GitHub (origin) | Notes |
+|--------|------------|---------------------|-------|
+| HEAD | 6a20e3b | 4dd3867 | Post-rebase if applied |
+| Branch tracking | master | origin/master | |
+| Ahead / Behind | +2 | -0 | 0/0 ideal after rebase |
+| Working tree | dirty (70 lines) | (remote clean by definition) | Uncommitted on PC |
+| Unique commits (24h) | 0 listed | See div below | |
+| Divergence PC-only commits | 2 | - | These + uncommitted = what we commit |
+| Divergence GH-only | - | 0 | Integrated via rebase (or ignored if aborted) |
+
+### Commits unique to PC (will be part of this safe commit or already in HEAD)
+- 6a20e3b feat(landing): landing page bacana premium com bot├úo Jogo R├ípido grande + 4 op├º├Áes claras de in├¡cio
+- c67de74 fix(chess): syntax App.tsx + upgraded analysis to alpha-beta minimax depth 5
+
+### Commits only on GitHub (fetched, integrated where possible)
+(none - PC was at or ahead of remote at research time)
+
+### Recent 24h local commits (full subjects + relative time)
+  (no new commits in last 24h; changes are uncommitted or from prior)
+
+### Pending uncommitted changes on PC (porcelain post-rebase/pop)
+```
+M grokassets/manifest.json
+ M src/index.css
+?? grokassets/BRAND-USAGE-GUIDELINES.md
+?? grokassets/banners/marketing/pitch-deck/bg-v1.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v10.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v11.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v12.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v13.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v14.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v15.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v16.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v17.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v18.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v19.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v2.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v20.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v21.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v22.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v23.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v24.svg
+?? grokassets/banners/marketing/pitch-deck/bg-v25.svg
+
+... (older history in git + truncated for readability; use git log -S patchnotes or open full file in editor)
+
+(End of 2026-06-02 augmentation. Full git history has complete trail.)

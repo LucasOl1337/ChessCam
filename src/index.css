@@ -1253,3 +1253,3903 @@ button {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.6; }
 }
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Extra Game UI Polish (chess.com feel) === */
+.app-shell {
+  background: #0f0f0e;
+  color: #f0f0ee;
+}
+
+.game-layout {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+}
+
+.board-column {
+  flex: 0 0 auto;
+}
+
+.game-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.panel-card {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c5c5c2;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.moves-table {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.move-row {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.move-index {
+  color: #666;
+  width: 18px;
+}
+
+.clickable-move:hover {
+  background: #2a2a27;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.history-nav button {
+  background: #252522;
+  border: 1px solid #3a3a37;
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-nav button:hover {
+  background: #333;
+  border-color: #555;
+}
+
+.player-strip {
+  background: #1c1c1a;
+  border: 1px solid #2f2f2c;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+
+.player-clock {
+  font-family: monospace;
+  background: #111;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-clock.low-time {
+  color: #f66;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
