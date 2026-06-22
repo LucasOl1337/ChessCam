@@ -27,3 +27,6 @@ dist-ssr
 .cloudflared-chesscam.yml
 .wrangler/
 .wrangler-dry-run/
+
+# Codegraph automation artifacts (SQLite + visualization)
+.codegraph/
