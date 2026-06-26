@@ -1,0 +1,66 @@
+{
+  "brand": {
+    "name": "ChessCam",
+    "vendor": "LucasOl1337",
+    "footer": "CHESSCAM",
+    "masthead": "NOTAS DA ATUALIZACAO",
+    "footerLeft": "Notas completas no GitHub Releases",
+    "bgGradient": ["#0E1726", "#123A32", "#0F766E"],
+    "pillGradient": ["#14B8A6", "#22C55E"]
+  },
+  "version": "v0.1.0",
+  "date": "22 de junho de 2026 · Release oficial",
+  "categories": [
+    {
+      "label": "Novidades",
+      "title": "NOVIDADES",
+      "color": "#FBBF24",
+      "items": [
+        {
+          "name": "Landing page Three.js",
+          "desc": "subprojeto site com hero de tabuleiro animado",
+          "tag": "SITE"
+        },
+        {
+          "name": "Baseline do app",
+          "desc": "estado inicial do app React de xadrez com camera",
+          "tag": "APP"
+        }
+      ]
+    },
+    {
+      "label": "Melhorias",
+      "title": "MELHORIAS",
+      "color": "#34D399",
+      "items": [
+        {
+          "name": "Fluxo de analise",
+          "desc": "history scrub, FEN, PGN, clocks e flip board",
+          "tag": "JOGO"
+        },
+        {
+          "name": "Partidas online",
+          "desc": "salas privadas, camera e movimentos via WebSocket",
+          "tag": "ONLINE"
+        }
+      ]
+    },
+    {
+      "label": "Sistemas",
+      "title": "SISTEMAS",
+      "color": "#A78BFA",
+      "items": [
+        {
+          "name": "Validacao realtime",
+          "desc": "server e worker validam movimentos online",
+          "tag": "WS"
+        },
+        {
+          "name": "Release oficial",
+          "desc": "tag v0.1.0 fixa o baseline publico atual",
+          "tag": "RELEASE"
+        }
+      ]
+    }
+  ]
+}
