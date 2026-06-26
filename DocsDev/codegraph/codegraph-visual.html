@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChessCam CodeGraph Visual</title>
+  <style>
+    :root {
+      --bg: #101418;
+      --panel: #171e24;
+      --panel2: #1e2730;
+      --text: #edf2f7;
+      --muted: #9fb0bf;
+      --ok: #4ade80;
+      --warn: #fbbf24;
+      --bad: #fb7185;
+      --info: #60a5fa;
+      --line: #445463;
+      --accent: #38d4c4;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+    header {
+      padding: 28px 32px 16px;
+      border-bottom: 1px solid #2b3640;
+      background: #121820;
+    }
+    h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: 0; }
+    h2 { margin: 0 0 14px; font-size: 18px; }
+    h3 { margin: 0 0 8px; font-size: 15px; }
+    p { margin: 0 0 10px; color: var(--muted); }
+    a { color: #8bdfff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    main {
+      display: grid;
+      grid-template-columns: minmax(640px, 1.3fr) minmax(360px, .7fr);
+      gap: 20px;
+      padding: 20px 32px 36px;
+    }
+    section {
+      background: var(--panel);
+      border: 1px solid #2b3640;
+      border-radius: 8px;
+      padding: 18px;
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+      max-width: 960px;
+    }
+    .metric {
+      background: var(--panel2);
+      border: 1px solid #33414d;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .metric strong { display: block; font-size: 20px; }
+    .metric span { color: var(--muted); font-size: 12px; }
+    .graph-wrap { overflow: auto; }
+    svg { width: 100%; min-width: 900px; height: auto; display: block; }
+    .node rect {
+      fill: #202b35;
+      stroke: #526575;
+      stroke-width: 1.4;
+      rx: 8;
+    }
+    .node text { fill: var(--text); font-size: 13px; pointer-events: none; }
+    .node .small { fill: var(--muted); font-size: 10px; }
+    .status-ok rect { stroke: var(--ok); }
+    .status-partial rect { stroke: var(--warn); }
+    .status-risk rect { stroke: var(--bad); }
+    .edge {
+      stroke: var(--line);
+      stroke-width: 1.8;
+      fill: none;
+      marker-end: url(#arrow);
+    }
+    .edge.online { stroke: var(--info); }
+    .edge.warn { stroke: var(--warn); stroke-dasharray: 5 5; }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .cards {
+      display: grid;
+      gap: 12px;
+    }
+    .card {
+      background: var(--panel2);
+      border: 1px solid #33414d;
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .card ul { margin: 8px 0 0 18px; padding: 0; color: var(--muted); }
+    .card li { margin: 4px 0; }
+    .tag {
+      display: inline-block;
+      border: 1px solid #3d4c58;
+      border-radius: 999px;
+      padding: 2px 8px;
+      margin: 2px 4px 2px 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .risk { color: var(--bad); }
+    .warn-text { color: var(--warn); }
+    .ok-text { color: var(--ok); }
+    @media (max-width: 1100px) {
+      main { grid-template-columns: 1fr; padding: 16px; }
+      header { padding: 22px 16px 14px; }
+      .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ChessCam CodeGraph Visual</h1>
+    <p>Mapa autocontido gerado a partir do indice CodeGraph local. Clique nos modulos para abrir arquivos relativos no repositorio.</p>
+    <div class="summary">
+      <div class="metric"><strong>17</strong><span>arquivos indexados</span></div>
+      <div class="metric"><strong>313</strong><span>nodes</span></div>
+      <div class="metric"><strong>755</strong><span>edges</span></div>
+      <div class="metric"><strong>wal</strong><span>SQLite journal</span></div>
+    </div>
+  </header>
+  <main>
+    <section>
+      <h2>Grafo de Modulos e Fluxos</h2>
+      <div class="graph-wrap">
+        <svg viewBox="0 0 1120 720" role="img" aria-label="CodeGraph module flow diagram">
+          <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+              <path d="M0,0 L10,4 L0,8 Z" fill="#758696"></path>
+            </marker>
+          </defs>
+
+          <path class="edge" d="M160 112 C250 112 255 150 340 150"></path>
+          <path class="edge" d="M500 150 C580 150 590 150 670 150"></path>
+          <path class="edge" d="M500 150 C575 205 600 245 680 300"></path>
+          <path class="edge" d="M815 150 C875 150 900 170 950 205"></path>
+          <path class="edge" d="M815 300 C890 285 910 255 950 235"></path>
+          <path class="edge warn" d="M500 300 C555 335 590 390 670 425"></path>
+          <path class="edge warn" d="M815 425 C880 420 905 360 950 300"></path>
+          <path class="edge online" d="M160 300 C255 300 270 300 350 300"></path>
+          <path class="edge online" d="M500 425 C565 460 600 512 670 535"></path>
+          <path class="edge online" d="M815 535 C870 525 900 500 950 455"></path>
+          <path class="edge online" d="M815 535 C900 560 915 600 950 635"></path>
+          <path class="edge warn" d="M160 535 C245 535 275 515 350 500"></path>
+
+          <a href="../../index.html" class="node status-ok">
+            <rect x="30" y="80" width="130" height="64"></rect>
+            <text x="48" y="108">index.html</text>
+            <text class="small" x="48" y="128">Vite root</text>
+          </a>
+          <a href="../../src/main.tsx" class="node status-ok">
+            <rect x="340" y="118" width="160" height="64"></rect>
+            <text x="360" y="146">src/main.tsx</text>
+            <text class="small" x="360" y="166">React bootstrap</text>
+          </a>
+          <a href="../../src/App.tsx" class="node status-partial">
+            <rect x="670" y="118" width="145" height="64"></rect>
+            <text x="692" y="146">App</text>
+            <text class="small" x="692" y="166">state coordinator</text>
+          </a>
+          <a href="../../src/components/ChessBoard.tsx" class="node status-ok">
+            <rect x="950" y="190" width="145" height="64"></rect>
+            <text x="968" y="218">ChessBoard</text>
+            <text class="small" x="968" y="238">board + moves</text>
+          </a>
+          <a href="../../src/chess/chessEngine.ts" class="node status-ok">
+            <rect x="950" y="285" width="145" height="64"></rect>
+            <text x="970" y="313">ChessEngine</text>
+            <text class="small" x="970" y="333">chess.js wrapper</text>
+          </a>
+          <a href="../../src/chess/analysisEngine.ts" class="node status-partial">
+            <rect x="670" y="268" width="145" height="64"></rect>
+            <text x="690" y="296">Analysis</text>
+            <text class="small" x="690" y="316">minimax local</text>
+          </a>
+          <a href="../../src/components/GamePanel.tsx" class="node status-partial">
+            <rect x="350" y="268" width="150" height="64"></rect>
+            <text x="370" y="296">GamePanel</text>
+            <text class="small" x="370" y="316">actions + camera UI</text>
+          </a>
+          <a href="../../src/net/roomManager.ts" class="node status-risk">
+            <rect x="670" y="393" width="145" height="64"></rect>
+            <text x="690" y="421">RoomManager</text>
+            <text class="small" x="690" y="441">not wired in App</text>
+          </a>
+          <a href="../../src/net/wsClient.ts" class="node status-partial">
+            <rect x="950" y="420" width="145" height="64"></rect>
+            <text x="976" y="448">WSClient</text>
+            <text class="small" x="976" y="468">reconnect + send</text>
+          </a>
+          <a href="../../server/index.ts" class="node status-ok">
+            <rect x="670" y="503" width="145" height="64"></rect>
+            <text x="698" y="531">Local server</text>
+            <text class="small" x="698" y="551">Express + ws</text>
+          </a>
+          <a href="../../worker/src/index.ts" class="node status-ok">
+            <rect x="950" y="610" width="145" height="64"></rect>
+            <text x="975" y="638">Worker DO</text>
+            <text class="small" x="975" y="658">ChessCamHub</text>
+          </a>
+          <a href="../../site/src/main.ts" class="node status-partial">
+            <rect x="30" y="503" width="130" height="64"></rect>
+            <text x="56" y="531">site/</text>
+            <text class="small" x="56" y="551">Three.js demo</text>
+          </a>
+          <a href="../../tmp_app_good.ts" class="node status-risk">
+            <rect x="350" y="468" width="150" height="64"></rect>
+            <text x="378" y="496">tmp_app_good</text>
+            <text class="small" x="378" y="516">stale duplicate</text>
+          </a>
+        </svg>
+      </div>
+      <div class="legend">
+        <span><i class="dot" style="background: var(--ok)"></i>funcional</span>
+        <span><i class="dot" style="background: var(--warn)"></i>parcial</span>
+        <span><i class="dot" style="background: var(--bad)"></i>risco/desconectado</span>
+        <span><i class="dot" style="background: var(--info)"></i>fluxo realtime/backend</span>
+      </div>
+    </section>
+
+    <section>
+      <h2>Leitura Rapida</h2>
+      <div class="cards">
+        <div class="card">
+          <h3>Fluxos funcionais</h3>
+          <span class="tag">local chess</span>
+          <span class="tag">legal moves</span>
+          <span class="tag">promotion</span>
+          <span class="tag">backend validation</span>
+          <ul>
+            <li>Partida local usa `ChessBoard` + `ChessEngine`.</li>
+            <li>Backends validam lances com `chess.js`.</li>
+            <li>Worker Durable Object esta configurado em `wrangler.toml`.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Fluxos parciais</h3>
+          <span class="tag">computer</span>
+          <span class="tag">analysis</span>
+          <span class="tag">clocks</span>
+          <span class="tag">draw/resign UI</span>
+          <ul>
+            <li class="warn-text">Computador consome `bestMove` como UCI, mas engine retorna SAN + `bestMoveUci`.</li>
+            <li class="warn-text">Clocks locais nao encerram por timeout.</li>
+            <li class="warn-text">Botoes draw/resign sao locais no `App` atual.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Desconexoes criticas</h3>
+          <span class="tag">RoomManager</span>
+          <span class="tag">WebRTC</span>
+          <span class="tag">protocol</span>
+          <ul>
+            <li class="risk">`App` nao importa `RoomManager`/`WSClient`.</li>
+            <li class="risk">Camera e video sao placeholders na UI atual.</li>
+            <li class="risk">Protocolos TS nao cobrem todas as mensagens dos backends.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Arquivos suspeitos</h3>
+          <span class="tag">tmp_app_good.ts</span>
+          <span class="tag">src/App.tsx.broken</span>
+          <ul>
+            <li class="risk">`tmp_app_good.ts` esta no root e entrou no indice CodeGraph.</li>
+            <li class="risk">`src/App.tsx.broken` parece backup quebrado/desconectado.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Documentos</h3>
+          <ul>
+            <li><a href="./inventory.md">inventory.md</a></li>
+            <li><a href="./codegraph-status.txt">codegraph-status.txt</a></li>
+            <li><a href="./codegraph-files.json">codegraph-files.json</a></li>
+            <li><a href="./codegraph-context.md">codegraph-context.md</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,104 @@
+[
+  {
+    "path": "eslint.config.js",
+    "language": "javascript",
+    "nodeCount": 7,
+    "size": 591
+  },
+  {
+    "path": "server/index.ts",
+    "language": "typescript",
+    "nodeCount": 41,
+    "size": 12279
+  },
+  {
+    "path": "site/src/main.ts",
+    "language": "typescript",
+    "nodeCount": 33,
+    "size": 5335
+  },
+  {
+    "path": "src/App.tsx",
+    "language": "tsx",
+    "nodeCount": 22,
+    "size": 15280
+  },
+  {
+    "path": "src/chess/analysisEngine.ts",
+    "language": "typescript",
+    "nodeCount": 15,
+    "size": 4648
+  },
+  {
+    "path": "src/chess/chessEngine.ts",
+    "language": "typescript",
+    "nodeCount": 22,
+    "size": 2271
+  },
+  {
+    "path": "src/chess/types.ts",
+    "language": "typescript",
+    "nodeCount": 6,
+    "size": 871
+  },
+  {
+    "path": "src/components/ChessBoard.tsx",
+    "language": "tsx",
+    "nodeCount": 22,
+    "size": 12173
+  },
+  {
+    "path": "src/components/GamePanel.tsx",
+    "language": "tsx",
+    "nodeCount": 4,
+    "size": 4466
+  },
+  {
+    "path": "src/main.tsx",
+    "language": "tsx",
+    "nodeCount": 5,
+    "size": 230
+  },
+  {
+    "path": "src/net/protocol.ts",
+    "language": "typescript",
+    "nodeCount": 4,
+    "size": 977
+  },
+  {
+    "path": "src/net/roomManager.ts",
+    "language": "typescript",
+    "nodeCount": 20,
+    "size": 2546
+  },
+  {
+    "path": "src/net/wsClient.ts",
+    "language": "typescript",
+    "nodeCount": 22,
+    "size": 3073
+  },
+  {
+    "path": "src/sound.ts",
+    "language": "typescript",
+    "nodeCount": 5,
+    "size": 1888
+  },
+  {
+    "path": "tmp_app_good.ts",
+    "language": "typescript",
+    "nodeCount": 39,
+    "size": 25126
+  },
+  {
+    "path": "vite.config.ts",
+    "language": "typescript",
+    "nodeCount": 4,
+    "size": 567
+  },
+  {
+    "path": "worker/src/index.ts",
+    "language": "typescript",
+    "nodeCount": 42,
+    "size": 14260
+  }
+]

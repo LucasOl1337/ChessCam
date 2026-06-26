@@ -1,0 +1,33 @@
+[1m
+CodeGraph Status
+[0m
+[36mProject:[0m C:\Projetos\ChessCam
+
+[1mIndex Statistics:[0m
+  Files:     17
+  Nodes:     313
+  Edges:     755
+  DB Size:   0.80 MB
+  Backend:   [32mnode:sqlite - built-in (full WAL)[0m
+  Journal:   [32mwal[0m
+
+[1mNodes by Kind:[0m
+  function        84
+  method          74
+  import          48
+  constant        43
+  type_alias      25
+  file            17
+  interface       9
+  class           5
+  variable        5
+  component       2
+  route           1
+
+[1mFiles by Language:[0m
+  typescript      12
+  tsx             4
+  javascript      1
+
+[32m[OK][0m Index is up to date
+
