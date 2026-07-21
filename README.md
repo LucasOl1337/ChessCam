@@ -11,8 +11,10 @@ Real-time online multiplayer chess — get matched with a random opponent in sec
 - **Server-validated moves** — rules enforced with `chess.js` (legal moves, check, checkmate, draws) so the server stays authoritative and clients can't cheat.
 - **Game clock** — per-player timer with increment.
 - **Reconnect handling** — drop and rejoin an in-progress game without losing state.
-- **Built-in analysis engine** — local position evaluation / best-move hints (`src/chess/analysisEngine.ts`).
-- **Edge-deployable** — ships to Cloudflare Workers via Wrangler (`worker/`).
+- **AI Arena** — run AI-vs-AI matches or play as White/Black against Claude, GPT, or Grok profiles through 9Router.
+- **Persistent match review** — saved matches, private/global chats, strategic reports, material score, captured pieces, and move-by-move review.
+- **Safe agent timeouts** — transient model failures pause and preserve the match instead of injecting an automatic fallback move.
+- **Edge-deployable** — the SPA and agent API ship together to Cloudflare Workers via Wrangler (`worker/`).
 
 ## Run locally
 
@@ -26,17 +28,19 @@ npm run dev:full   # Vite client + WebSocket server together
 | `npm run dev` | Front-end only (Vite) |
 | `npm run server` | WebSocket server only (`tsx server/index.ts`) |
 | `npm run build` | Type-check + production build |
-| `npm run worker:deploy` | Deploy to Cloudflare Workers |
+| `npm run test:agent-match` | Validate an AI-vs-AI match against a deployed endpoint |
+| `npm run worker:deploy` | Build and deploy the SPA/API to Cloudflare Workers |
 
 ## Architecture
 
 ```
 src/
+  agent/        Arena UI, model profiles, gateway contract, persistence
   net/          WebSocket client, room manager, wire protocol
-  chess/        chess engine wrapper + analysis engine (chess.js)
+  chess/        chess.js rules wrapper
   components/   ChessBoard, GamePanel (react-chessboard + framer-motion)
-server/         Express + ws real-time server
-worker/         Cloudflare Worker entry (edge deploy)
+server/         Express + ws development server and local agent API
+worker/         Cloudflare Worker + Durable Object production backend
 ```
 
 ---
