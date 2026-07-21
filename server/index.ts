@@ -8,6 +8,8 @@ import path from 'node:path';
 import { WebSocketServer, WebSocket } from 'ws';
 import { createServer } from 'http';
 import { Chess } from 'chess.js';
+import { askChessAgent, compactPrivateMemory, type AgentGlobalMessage } from '../src/agent/agentGateway';
+import { AGENT_MODEL_PROFILES, getAgentModelProfile } from '../src/agent/models';
 
 type PlayerColor = 'white' | 'black';
 
@@ -365,6 +367,73 @@ wss.on('connection', (ws) => {
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', rooms: rooms.size, clients: clients.size, waiting: Boolean(waitingClientId) });
+});
+
+app.get('/api/agent-models', (_req, res) => {
+  res.json({
+    ok: true,
+    profiles: AGENT_MODEL_PROFILES.map(({ id, label, route, available, note }) => ({ id, label, route, available, note })),
+  });
+});
+
+app.post('/api/agent-move', express.json({ limit: '16kb' }), async (req, res) => {
+  const body = req.body as Record<string, unknown>;
+  const fen = typeof body.fen === 'string' ? body.fen.trim() : '';
+  const profileId = typeof body.profileId === 'string' ? body.profileId.trim() : '';
+  const color = body.color === 'white' || body.color === 'black' ? body.color : '';
+  const ply = Math.max(1, Math.min(300, Number(body.ply) || 1));
+  const history = Array.isArray(body.history)
+    ? body.history.slice(-8).filter((item): item is string => typeof item === 'string').map((item) => item.slice(0, 16))
+    : [];
+  const privateMemory = typeof body.privateMemory === 'string' ? body.privateMemory.replace(/[\r\n\t]+/g, ' ').slice(0, 1000) : '';
+  const globalChat: AgentGlobalMessage[] = Array.isArray(body.globalChat)
+    ? body.globalChat.slice(-6).flatMap((item) => {
+        if (!item || typeof item !== 'object') return [];
+        const candidate = item as Record<string, unknown>;
+        if ((candidate.color !== 'white' && candidate.color !== 'black') || typeof candidate.message !== 'string') return [];
+        return [{ color: candidate.color, ply: Math.max(1, Math.min(300, Number(candidate.ply) || 1)), message: candidate.message.slice(0, 180) }];
+      })
+    : [];
+  const profile = getAgentModelProfile(profileId);
+
+  if (!profile?.available) return res.status(409).json({ ok: false, error: 'Modelo indisponível no 9Router.' });
+  if (!fen || !color) return res.status(400).json({ ok: false, error: 'Posição ou cor inválida.' });
+
+  let game: Chess;
+  try {
+    game = new Chess(fen);
+  } catch {
+    return res.status(400).json({ ok: false, error: 'FEN inválido.' });
+  }
+  const expectedColor = game.turn() === 'w' ? 'white' : 'black';
+  if (expectedColor !== color || game.isGameOver()) return res.status(409).json({ ok: false, error: 'Turno inválido.' });
+
+  const legalMoves = game.moves({ verbose: true }).map((move) => `${move.from}${move.to}${move.promotion ?? ''}`);
+  const baseUrl = process.env.NINE_ROUTER_BASE_URL;
+  const apiKey = process.env.NINE_ROUTER_API_KEY;
+  if (!baseUrl || !apiKey) return res.status(503).json({ ok: false, error: '9Router não configurado no servidor local.' });
+
+  const startedAt = Date.now();
+  try {
+    const turn = await askChessAgent(
+      { baseUrl, apiKey, route: profile.route, timeoutMs: 60_000 },
+      { color, fen, legalMoves, history, ply, privateMemory, globalChat },
+    );
+    return res.json({
+      ok: true,
+      move: turn.move,
+      private: turn.private,
+      global: turn.global,
+      memory: compactPrivateMemory(turn.private),
+      inputChars: turn.inputChars,
+      outputChars: turn.outputChars,
+      fallback: false,
+      latencyMs: Date.now() - startedAt,
+    });
+  } catch (error) {
+    console.error('[Agent] move failed:', error);
+    return res.status(502).json({ ok: false, error: 'O agente não respondeu com um lance legal a tempo.' });
+  }
 });
 
 app.get(/.*/, (_req, res) => {

@@ -1,9 +1,10 @@
 ﻿import React from "react";
+import type { Move } from "chess.js";
 
 interface GamePanelProps {
   isOnlineMode: boolean;
   roomCode?: string;
-  moves?: any[];
+  moves?: Move[];
   onStartCameraMatch?: () => void;
   onOfferDraw?: () => void;
   onResign?: () => void;

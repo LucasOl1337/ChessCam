@@ -1,33 +1,32 @@
 ﻿import React from 'react';
-import { ChessEngine } from './chess/chessEngine';
-import { Camera, BarChart3, FileText, Zap, Users, Monitor, Lock, Play } from 'lucide-react';
+import type { Move } from 'chess.js';
+import { ChessEngine, type PromotionPiece } from './chess/chessEngine';
+import { Camera, Bot, FileText, Zap, Users, Monitor, Lock, Play } from 'lucide-react';
 import { ChessBoard } from './components/ChessBoard';
 import { GamePanel } from './components/GamePanel';
 import { playChessSound } from './sound';
-import { analysisEngine } from './chess/analysisEngine';
+import { AgentArena, type ArenaMatchMode } from './agent/AgentArena';
 
 export default function App() {
   const [screen, setScreen] = React.useState<'landing' | 'game'>('landing');
-  const [gameMode, setGameMode] = React.useState<'local' | 'online' | 'computer'>('local');
-  const [moves, setMoves] = React.useState<any[]>([]);
+  const [gameMode, setGameMode] = React.useState<'local' | 'online' | 'agent'>('local');
+  const [agentInitialMode, setAgentInitialMode] = React.useState<ArenaMatchMode>('ai-vs-ai');
+  const [moves, setMoves] = React.useState<Move[]>([]);
   const [gameResult, setGameResult] = React.useState<string | null>(null);
   const [historyIndex, setHistoryIndex] = React.useState<number | null>(null);
   const [boardFlipped, setBoardFlipped] = React.useState(false);
-  const [analysisResult, setAnalysisResult] = React.useState<any>(null);
   const [whiteTime, setWhiteTime] = React.useState(300);
   const [blackTime, setBlackTime] = React.useState(300);
   const [activeColor, setActiveColor] = React.useState<'white' | 'black'>('white');
   const [timeControl] = React.useState({ minutes: 5, increment: 0 });
-  const [vsComputer, setVsComputer] = React.useState(false);
-  const [computerLevel, setComputerLevel] = React.useState<'easy' | 'medium' | 'hard'>('medium');
-  const timerRef = React.useRef<any>(null);
+  const timerRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
 
   const isOnlineMode = gameMode === 'online';
-  const isComputerMode = gameMode === 'computer';
+  const isAgentMode = gameMode === 'agent';
   const localViewFen = historyIndex !== null ? getFenForHistoryIndex(historyIndex, moves) : undefined;
 
   React.useEffect(() => {
-    if (isOnlineMode || gameResult) {
+    if (isOnlineMode || isAgentMode || gameResult) {
       if (timerRef.current) clearInterval(timerRef.current);
       return;
     }
@@ -36,7 +35,7 @@ export default function App() {
       else setBlackTime(t => Math.max(0, t - 1));
     }, 1000);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [activeColor, isOnlineMode, gameResult]);
+  }, [activeColor, isOnlineMode, isAgentMode, gameResult]);
 
   function resetClocks() {
     const t = timeControl.minutes * 60;
@@ -49,17 +48,15 @@ export default function App() {
     setMoves([]);
     setGameResult(null);
     setHistoryIndex(null);
-    setAnalysisResult(null);
-    setVsComputer(false);
     resetClocks();
   }
 
-  function getFenForHistoryIndex(idx: number | null, moveList: any[]): string | undefined {
+  function getFenForHistoryIndex(idx: number | null, moveList: Move[]): string | undefined {
     if (idx === null || !moveList.length) return undefined;
     const eng = new ChessEngine();
     for (let i = 0; i <= idx && i < moveList.length; i++) {
-      const m = moveList[i];
-      if (m?.from && m?.to) try { eng.makeMove(m.from, m.to, m.promotion || 'q'); } catch {}
+      const move = moveList[i];
+      eng.makeMove(move.from, move.to, (move.promotion as PromotionPiece | undefined) || 'q');
     }
     return eng.getFen();
   }
@@ -69,46 +66,11 @@ export default function App() {
     setHistoryIndex(idx);
   }
 
-  function handleMove(move: any) {
+  function handleMove(move: Move) {
     setMoves(p => [...p, move]);
     setHistoryIndex(null);
     setActiveColor(c => c === 'white' ? 'black' : 'white');
     playChessSound('move');
-
-    // Very basic "vs Computer" auto-reply using our analysis engine (placeholder until real Stockfish)
-    if ((gameMode === 'computer' || vsComputer) && !gameResult) {
-      setTimeout(async () => {
-        try {
-          const eng = new ChessEngine();
-          // replay all moves so far + the one just made
-          [...moves, move].forEach((m: any) => {
-            if (m?.from && m?.to) try { eng.makeMove(m.from, m.to, m.promotion || 'q'); } catch {}
-          });
-          const res = await analysisEngine.analyze(eng.getFen(), { depth: computerLevel === 'easy' ? 2 : computerLevel === 'medium' ? 4 : 5 });
-          if (res.bestMove && res.bestMove.length >= 4) {
-            const from = res.bestMove.slice(0, 2);
-            const to = res.bestMove.slice(2, 4);
-            const promo = res.bestMove.length > 4 ? res.bestMove[4] : 'q';
-            // make the computer move on the board
-            const compMove = eng.makeMove(from as any, to as any, promo as any);
-            if (compMove) {
-              setMoves(p => [...p, compMove]);
-              setActiveColor('white');
-              playChessSound('move');
-            }
-          }
-        } catch (e) { /* ignore auto-move errors for now */ }
-      }, 650);
-    }
-  }
-
-  async function analyzePosition() {
-    const eng = new ChessEngine();
-    (isOnlineMode ? [] : moves).forEach((m: any) => {
-      if (m?.from && m?.to) try { eng.makeMove(m.from, m.to, m.promotion || 'q'); } catch {}
-    });
-    const res = await analysisEngine.analyze(eng.getFen(), { depth: 5 });
-    setAnalysisResult(res);
   }
 
   async function copyFEN() {
@@ -119,12 +81,9 @@ export default function App() {
 
   async function copyPGN() {
     const eng = new ChessEngine();
-    const sans = moves.map((m: any) => {
-      if (m?.from && m?.to) {
-        const mo = eng.makeMove(m.from, m.to, m.promotion || 'q');
-        return mo?.san;
-      }
-      return null;
+    const sans = moves.map((move) => {
+      const played = eng.makeMove(move.from, move.to, (move.promotion as PromotionPiece | undefined) || 'q');
+      return played?.san;
     }).filter(Boolean);
     if (sans.length) {
       await navigator.clipboard.writeText(sans.join(' '));
@@ -147,18 +106,15 @@ export default function App() {
 
   function startLocal() {
     setGameMode('local');
-    setVsComputer(false);
     setScreen('game');
     resetMatchState();
   }
 
-  function startVsComputer(level: 'easy' | 'medium' | 'hard' = 'medium') {
-    setGameMode('computer');
-    setVsComputer(true);
-    setComputerLevel(level);
+  function startVsModel() {
+    setAgentInitialMode('human-white');
+    setGameMode('agent');
     setScreen('game');
     resetMatchState();
-    // Give user white by default
   }
 
   function startPrivateRoom() {
@@ -171,6 +127,13 @@ export default function App() {
 
   function startCameraStranger() {
     setGameMode('online');
+    setScreen('game');
+    resetMatchState();
+  }
+
+  function startAgentArena() {
+    setAgentInitialMode('ai-vs-ai');
+    setGameMode('agent');
     setScreen('game');
     resetMatchState();
   }
@@ -206,22 +169,31 @@ export default function App() {
 
           <div className="landing-divider">ou escolha como quer jogar</div>
 
+          <button className="agent-arena-cta" onClick={startAgentArena}>
+            <div className="choice-icon"><Bot size={28} /></div>
+            <div className="choice-body">
+              <div className="choice-title">Arena IA vs IA</div>
+              <div className="choice-desc">Escolha dois modelos do 9Router e assista a uma partida completa entre agentes.</div>
+            </div>
+            <span className="agent-arena-pill">NOVO</span>
+          </button>
+
           {/* Choice Grid - nice selectable options */}
           <div className="landing-choices">
             <button className="choice-card" onClick={startLocal}>
               <div className="choice-icon"><Monitor size={26} /></div>
               <div className="choice-body">
                 <div className="choice-title">Partida Local</div>
-                <div className="choice-desc">Passa e joga no mesmo dispositivo. Análise forte inclusa.</div>
+                <div className="choice-desc">Passa e joga no mesmo dispositivo, com regras oficiais e histórico.</div>
               </div>
             </button>
 
-            <button className="choice-card" onClick={() => startVsComputer('medium')}>
+            <button className="choice-card" onClick={startVsModel}>
               <div className="choice-icon"><Play size={26} /></div>
               <div className="choice-body">
-                <div className="choice-title">Contra o Computador</div>
-                <div className="choice-desc">Níveis fácil / médio / difícil • Motor minimax</div>
-                <div className="choice-sub">Nível: {computerLevel}</div>
+                <div className="choice-title">Jogar contra uma IA</div>
+                <div className="choice-desc">Escolha Claude, GPT, Grok ou outro modelo e jogue de brancas ou pretas.</div>
+                <div className="choice-sub">Com planos, chat, placar e replay completo</div>
               </div>
             </button>
 
@@ -244,7 +216,7 @@ export default function App() {
 
           <div className="landing-footer">
             <div className="tech-badges">
-              <span>Motor αβ 5</span>
+              <span>Modelos 9Router</span>
               <span>Clocks reais</span>
               <span>WebRTC P2P</span>
             </div>
@@ -255,8 +227,12 @@ export default function App() {
     );
   }
 
-  // ========= GAME SCREEN (kept similar but with computer mode awareness) =========
-  const opponentLabel = isOnlineMode ? 'Oponente na câmera' : (isComputerMode ? `Computador (${computerLevel})` : 'Convidado');
+  if (isAgentMode) {
+    return <AgentArena initialMode={agentInitialMode} onBack={() => { setScreen('landing'); resetMatchState(); }} />;
+  }
+
+  // ========= LOCAL / ONLINE GAME SCREEN =========
+  const opponentLabel = isOnlineMode ? 'Oponente na câmera' : 'Convidado';
 
   return (
     <div className="app-shell">
@@ -270,7 +246,7 @@ export default function App() {
         </div>
         <div className="topbar-status">
           <span className={`status-dot ${isOnlineMode ? 'live' : ''}`} />
-          {isOnlineMode ? 'Camera match' : isComputerMode ? 'vs Computador' : 'Local'}
+          {isOnlineMode ? 'Camera match' : 'Local'}
         </div>
         <button onClick={() => { setScreen('landing'); resetMatchState(); }} style={{ marginLeft: 'auto', fontSize: 12, padding: '4px 12px' }}>← Voltar ao menu</button>
       </header>
@@ -293,13 +269,13 @@ export default function App() {
             externalFen={isOnlineMode ? undefined : localViewFen}
             playerColor={boardFlipped ? 'black' : undefined}
             disabled={isOnlineMode || historyIndex !== null}
-            arrows={analysisResult ? [{ from: (analysisResult.bestMove || '').slice(0,2), to: (analysisResult.bestMove || '').slice(2,4), color: '#4ade80' }] : []}
+            arrows={[]}
           />
 
           <div className="player-strip light">
             <div className="player-avatar">W</div>
             <div className="player-meta">
-              <div className="player-name">Você {isComputerMode ? '(brancas)' : ''}</div>
+              <div className="player-name">Você</div>
               <div className="player-label">white</div>
             </div>
             <div className={`player-clock ${whiteTime < 30 ? 'low-time' : ''}`}>{Math.floor(whiteTime/60)}:{(whiteTime%60).toString().padStart(2,'0')}</div>
@@ -312,7 +288,6 @@ export default function App() {
               <span>{historyIndex === null ? 'Live' : `${(historyIndex ?? 0)+1}/${moves.length}`}</span>
               <button onClick={() => jumpToHistory((historyIndex ?? -1)+1)}>▶</button>
               <button onClick={() => jumpToHistory(null)}>Live</button>
-              <button onClick={analyzePosition} style={{ background: '#1e40af', color: '#fff', padding: '0 8px' }}><BarChart3 size={14} /> Analisar</button>
             </div>
           )}
         </section>
@@ -328,24 +303,16 @@ export default function App() {
             onFlipBoard={() => setBoardFlipped(f => !f)}
           />
 
-          {analysisResult && (
-            <div className="panel-card" style={{ borderColor: '#4ade80', background: 'rgba(74,222,128,0.1)' }}>
-              <div style={{ color: '#4ade80', fontWeight: 600 }}>Análise (depth {analysisResult.depth || 4})</div>
-              <div>Melhor: <strong>{analysisResult.bestMove}</strong> • Eval: <span style={{ color: analysisResult.eval > 0 ? '#4ade80' : '#f87171' }}>{analysisResult.eval}</span></div>
-            </div>
-          )}
-
           <div className="panel-card">
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               <button onClick={copyFEN} style={{ fontSize: 12, padding: '6px 10px' }}><FileText size={14} /> FEN</button>
               <button onClick={copyPGN} style={{ fontSize: 12, padding: '6px 10px' }}><FileText size={14} /> PGN</button>
-              <button onClick={analyzePosition} style={{ fontSize: 12, padding: '6px 10px', background: '#1e40af', color: '#fff' }}><BarChart3 size={14} /> Analisar</button>
             </div>
           </div>
 
           {gameResult && <div style={{ padding: 8, background: 'rgba(16,185,129,0.15)', color: '#4ade80', textAlign: 'center', fontWeight: 600 }}>{gameResult}</div>}
           <div style={{ fontSize: 11, opacity: 0.6, padding: '4px 8px' }}>
-            {isComputerMode ? `Motor minimax (nível ${computerLevel})` : 'Motor αβ depth 5'} • Rumo ao Stockfish
+            Regras oficiais via chess.js • IA disponível pela Arena 9Router
           </div>
         </div>
       </main>

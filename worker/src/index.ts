@@ -1,8 +1,12 @@
 import { Chess } from 'chess.js';
+import { askChessAgent, compactPrivateMemory, type AgentGlobalMessage } from '../../src/agent/agentGateway';
+import { AGENT_MODEL_PROFILES, getAgentModelProfile } from '../../src/agent/models';
 
 export interface Env {
   ASSETS: Fetcher;
   CHESSCAM_HUB: DurableObjectNamespace<ChessCamHub>;
+  NINE_ROUTER_API_KEY: string;
+  NINE_ROUTER_BASE_URL: string;
 }
 
 type PlayerColor = 'white' | 'black';
@@ -40,6 +44,25 @@ type ClientMessage = {
 
 const START_FEN = new Chess().fen();
 const ROOM_CODE_RE = /[^A-Z0-9]/g;
+const AGENT_MINUTE_LIMIT = 40;
+const AGENT_HOUR_LIMIT = 360;
+
+type AgentRateWindow = {
+  minuteStartedAt: number;
+  minuteCount: number;
+  hourStartedAt: number;
+  hourCount: number;
+};
+
+type AgentMoveBody = {
+  fen?: unknown;
+  profileId?: unknown;
+  color?: unknown;
+  ply?: unknown;
+  history?: unknown;
+  privateMemory?: unknown;
+  globalChat?: unknown;
+};
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -58,6 +81,21 @@ export default {
       return Response.json({ ok: true, service: 'chesscam-worker' });
     }
 
+    if (url.pathname === '/api/agent-models') {
+      return Response.json({
+        ok: true,
+        profiles: AGENT_MODEL_PROFILES.map(({ id, label, route, available, note }) => ({ id, label, route, available, note })),
+      });
+    }
+
+    if (url.pathname === '/api/agent-move') {
+      const id = env.CHESSCAM_HUB.idFromName('agent-arena-v3');
+      const headers = new Headers(request.headers);
+      headers.set('X-ChessCam-Agent-Move', '1');
+      headers.set('X-ChessCam-Origin-Host', url.hostname);
+      return env.CHESSCAM_HUB.get(id).fetch(new Request(request, { headers }));
+    }
+
     return env.ASSETS.fetch(request);
   },
 };
@@ -65,6 +103,7 @@ export default {
 export class ChessCamHub implements DurableObject {
   private clients = new Map<WebSocket, ClientState>();
   private rooms = new Map<string, RoomState>();
+  private agentRateWindows = new Map<string, AgentRateWindow>();
   private waitingClientId?: string;
 
   constructor(private state: DurableObjectState, private env: Env) {
@@ -74,6 +113,10 @@ export class ChessCamHub implements DurableObject {
 
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
+
+    if (url.pathname === '/api/agent-move' || request.headers.get('X-ChessCam-Agent-Move') === '1') {
+      return this.handleAgentMoveRequest(request);
+    }
 
     if (url.pathname === '/api/realtime-health') {
       return Response.json({
@@ -93,6 +136,155 @@ export class ChessCamHub implements DurableObject {
     this.handleSocket(server);
 
     return new Response(null, { status: 101, webSocket: client });
+  }
+
+  private async handleAgentMoveRequest(request: Request): Promise<Response> {
+    if (request.method !== 'POST') {
+      return Response.json({ ok: false, error: 'Método não permitido.' }, { status: 405 });
+    }
+
+    const origin = request.headers.get('Origin');
+    const expectedHost = request.headers.get('X-ChessCam-Origin-Host') || new URL(request.url).hostname;
+    if (origin && new URL(origin).hostname !== expectedHost) {
+      return Response.json({ ok: false, error: 'Origem não permitida.' }, { status: 403 });
+    }
+
+    const contentLength = Number(request.headers.get('Content-Length') || 0);
+    if (contentLength > 16_384) {
+      return Response.json({ ok: false, error: 'Requisição muito grande.' }, { status: 413 });
+    }
+
+    const clientKey = request.headers.get('CF-Connecting-IP') || 'unknown';
+    const retryAfter = this.consumeAgentRateLimit(clientKey);
+    if (retryAfter > 0) {
+      return Response.json(
+        { ok: false, error: 'Muitas jogadas em sequência. Aguarde um instante.' },
+        { status: 429, headers: { 'Retry-After': String(retryAfter) } },
+      );
+    }
+
+    let body: AgentMoveBody;
+    try {
+      body = await request.json() as AgentMoveBody;
+    } catch {
+      return Response.json({ ok: false, error: 'JSON inválido.' }, { status: 400 });
+    }
+
+    const fen = typeof body.fen === 'string' ? body.fen.trim() : '';
+    const profileId = typeof body.profileId === 'string' ? body.profileId.trim() : '';
+    const color = body.color === 'black' ? 'black' : body.color === 'white' ? 'white' : '';
+    const ply = Math.max(1, Math.min(300, Number(body.ply) || 1));
+    const history = Array.isArray(body.history)
+      ? body.history.slice(-8).filter((item): item is string => typeof item === 'string').map((item) => item.slice(0, 16))
+      : [];
+    const privateMemory = typeof body.privateMemory === 'string' ? body.privateMemory.replace(/[\r\n\t]+/g, ' ').slice(0, 1000) : '';
+    const globalChat: AgentGlobalMessage[] = Array.isArray(body.globalChat)
+      ? body.globalChat.slice(-6).flatMap((item) => {
+          if (!item || typeof item !== 'object') return [];
+          const candidate = item as Record<string, unknown>;
+          if ((candidate.color !== 'white' && candidate.color !== 'black') || typeof candidate.message !== 'string') return [];
+          return [{
+            color: candidate.color,
+            ply: Math.max(1, Math.min(300, Number(candidate.ply) || 1)),
+            message: candidate.message.replace(/[\r\n\t]+/g, ' ').slice(0, 180),
+          }];
+        })
+      : [];
+    const profile = getAgentModelProfile(profileId);
+
+    if (!profile || !profile.available) {
+      return Response.json({ ok: false, error: 'Modelo indisponível no 9Router da VM.' }, { status: 409 });
+    }
+    if (!fen || fen.length > 120 || !color) {
+      return Response.json({ ok: false, error: 'Posição ou cor inválida.' }, { status: 400 });
+    }
+
+    let game: Chess;
+    try {
+      game = new Chess(fen);
+    } catch {
+      return Response.json({ ok: false, error: 'FEN inválido.' }, { status: 400 });
+    }
+
+    const expectedColor = game.turn() === 'w' ? 'white' : 'black';
+    if (color !== expectedColor || game.isGameOver()) {
+      return Response.json({ ok: false, error: 'A posição não está pronta para este agente.' }, { status: 409 });
+    }
+
+    const legalMoves = game.moves({ verbose: true }).map((move) => `${move.from}${move.to}${move.promotion ?? ''}`);
+    if (!legalMoves.length) {
+      return Response.json({ ok: false, error: 'Não há lances legais.' }, { status: 409 });
+    }
+
+    const startedAt = Date.now();
+    try {
+      const turn = await askChessAgent(
+        {
+          baseUrl: this.env.NINE_ROUTER_BASE_URL,
+          apiKey: this.env.NINE_ROUTER_API_KEY,
+          route: profile.route,
+          timeoutMs: 60_000,
+        },
+        { color, fen, legalMoves, history, ply, privateMemory, globalChat },
+      );
+
+      return Response.json({
+        ok: true,
+        move: turn.move,
+        private: turn.private,
+        global: turn.global,
+        memory: compactPrivateMemory(turn.private),
+        inputChars: turn.inputChars,
+        outputChars: turn.outputChars,
+        fallback: false,
+        latencyMs: Date.now() - startedAt,
+      });
+    } catch (error) {
+      console.error('agent-move failed', stringifyError(error));
+      if (isTransientAgentError(error)) {
+        return Response.json(
+          {
+            ok: false,
+            error: 'O modelo demorou além do limite. A partida foi pausada e salva para você continuar sem aceitar lances automáticos.',
+            code: 'AGENT_TEMPORARILY_UNAVAILABLE',
+            retryable: true,
+          },
+          { status: 503, headers: { 'Retry-After': '5' } },
+        );
+      }
+      return Response.json(
+        { ok: false, error: 'O agente não respondeu com um lance legal a tempo. Tente novamente.' },
+        { status: 502 },
+      );
+    }
+  }
+
+  private consumeAgentRateLimit(clientKey: string) {
+    const now = Date.now();
+    const current = this.agentRateWindows.get(clientKey) ?? {
+      minuteStartedAt: now,
+      minuteCount: 0,
+      hourStartedAt: now,
+      hourCount: 0,
+    };
+    if (now - current.minuteStartedAt >= 60_000) {
+      current.minuteStartedAt = now;
+      current.minuteCount = 0;
+    }
+    if (now - current.hourStartedAt >= 3_600_000) {
+      current.hourStartedAt = now;
+      current.hourCount = 0;
+    }
+    if (current.minuteCount >= AGENT_MINUTE_LIMIT) {
+      return Math.max(1, Math.ceil((60_000 - (now - current.minuteStartedAt)) / 1000));
+    }
+    if (current.hourCount >= AGENT_HOUR_LIMIT) {
+      return Math.max(1, Math.ceil((3_600_000 - (now - current.hourStartedAt)) / 1000));
+    }
+    current.minuteCount += 1;
+    current.hourCount += 1;
+    this.agentRateWindows.set(clientKey, current);
+    return 0;
   }
 
   private handleSocket(ws: WebSocket) {
@@ -286,7 +478,7 @@ export class ChessCamHub implements DurableObject {
     if (!room) return;
 
     room.game.reset();
-    (room as any).lastMoveTimestamp = Date.now();
+    room.lastMoveTimestamp = Date.now();
 
     const payload = {
       type: 'rematch',
@@ -443,6 +635,11 @@ function nextAvailableColor(room: RoomState): PlayerColor {
 
 function stringifyError(error: unknown) {
   return error instanceof Error ? error.message : String(error);
+}
+
+function isTransientAgentError(error: unknown) {
+  const message = stringifyError(error);
+  return !/não configurado|HTTP (?:400|401|403|404)/i.test(message);
 }
 
 void START_FEN;
