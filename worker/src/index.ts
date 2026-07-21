@@ -81,6 +81,11 @@ export default {
       return Response.json({ ok: true, service: 'chesscam-worker' });
     }
 
+    if (url.pathname === '/api/realtime-health') {
+      const id = env.CHESSCAM_HUB.idFromName('global-matchmaking-v1');
+      return env.CHESSCAM_HUB.get(id).fetch(request);
+    }
+
     if (url.pathname === '/api/agent-models') {
       return Response.json({
         ok: true,
