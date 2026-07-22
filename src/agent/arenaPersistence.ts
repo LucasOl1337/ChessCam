@@ -12,6 +12,8 @@ export type PersistedArenaMove = {
   fallback: boolean;
   inputChars: number;
   outputChars: number;
+  inputTokens?: number;
+  outputTokens?: number;
 };
 
 export type PersistedArenaMatch = {
@@ -148,7 +150,9 @@ function isPersistedMove(value: unknown): value is PersistedArenaMove {
     && typeof insight.opponentPrediction === 'string'
     && typeof insight.longTermStrategy === 'string'
     && typeof insight.adaptations === 'string'
-    && typeof move.global === 'string';
+    && typeof move.global === 'string'
+    && (move.inputTokens === undefined || typeof move.inputTokens === 'number')
+    && (move.outputTokens === undefined || typeof move.outputTokens === 'number');
 }
 
 function safeGet(key: string) {

@@ -1,5 +1,5 @@
 import { Chess } from 'chess.js';
-import { askChessAgent, compactPrivateMemory, type AgentGlobalMessage } from '../../src/agent/agentGateway';
+import { askChessAgent, compactPrivateMemory, shortlistAgentMoves, type AgentGlobalMessage } from '../../src/agent/agentGateway';
 import { AGENT_MODEL_PROFILES, getAgentModelProfile } from '../../src/agent/models';
 
 export interface Env {
@@ -89,7 +89,7 @@ export default {
     if (url.pathname === '/api/agent-models') {
       return Response.json({
         ok: true,
-        profiles: AGENT_MODEL_PROFILES.map(({ id, label, route, available, note }) => ({ id, label, route, available, note })),
+        profiles: AGENT_MODEL_PROFILES.map(({ id, label, route, available, speed, note }) => ({ id, label, route, available, speed, note })),
       });
     }
 
@@ -109,6 +109,8 @@ export class ChessCamHub implements DurableObject {
   private clients = new Map<WebSocket, ClientState>();
   private rooms = new Map<string, RoomState>();
   private agentRateWindows = new Map<string, AgentRateWindow>();
+  private agentCooldowns = new Map<string, number>();
+  private activeAgentRoutes = new Set<string>();
   private waitingClientId?: string;
 
   constructor(private state: DurableObjectState, private env: Env) {
@@ -204,6 +206,32 @@ export class ChessCamHub implements DurableObject {
       return Response.json({ ok: false, error: 'Posição ou cor inválida.' }, { status: 400 });
     }
 
+    const cooldownUntil = this.agentCooldowns.get(profile.route) ?? 0;
+    if (cooldownUntil > Date.now()) {
+      const retryAfter = Math.max(1, Math.ceil((cooldownUntil - Date.now()) / 1000));
+      return Response.json(
+        {
+          ok: false,
+          error: `Este modelo ainda está liberando a solicitação anterior. Aguarde ${retryAfter}s antes de continuar.`,
+          code: 'AGENT_COOLDOWN',
+          retryable: false,
+        },
+        { status: 503, headers: { 'Retry-After': String(retryAfter) } },
+      );
+    }
+    this.agentCooldowns.delete(profile.route);
+    if (this.activeAgentRoutes.has(profile.route)) {
+      return Response.json(
+        {
+          ok: false,
+          error: 'Este modelo já está calculando outro lance. Aguarde a solicitação atual terminar.',
+          code: 'AGENT_BUSY',
+          retryable: false,
+        },
+        { status: 409, headers: { 'Retry-After': '5' } },
+      );
+    }
+
     let game: Chess;
     try {
       game = new Chess(fen);
@@ -216,21 +244,22 @@ export class ChessCamHub implements DurableObject {
       return Response.json({ ok: false, error: 'A posição não está pronta para este agente.' }, { status: 409 });
     }
 
-    const legalMoves = game.moves({ verbose: true }).map((move) => `${move.from}${move.to}${move.promotion ?? ''}`);
-    if (!legalMoves.length) {
+    const allLegalMoves = game.moves({ verbose: true }).map((move) => `${move.from}${move.to}${move.promotion ?? ''}`);
+    if (!allLegalMoves.length) {
       return Response.json({ ok: false, error: 'Não há lances legais.' }, { status: 409 });
     }
 
     const startedAt = Date.now();
+    this.activeAgentRoutes.add(profile.route);
     try {
       const turn = await askChessAgent(
         {
           baseUrl: this.env.NINE_ROUTER_BASE_URL,
           apiKey: this.env.NINE_ROUTER_API_KEY,
           route: profile.route,
-          timeoutMs: 60_000,
+          timeoutMs: profile.speed === 'slow' ? 90_000 : profile.speed === 'balanced' ? 60_000 : 45_000,
         },
-        { color, fen, legalMoves, history, ply, privateMemory, globalChat },
+        { color, fen, legalMoves: profile.speed === 'slow' ? shortlistAgentMoves(fen, 12) : allLegalMoves, history, ply, privateMemory, globalChat },
       );
 
       return Response.json({
@@ -241,12 +270,15 @@ export class ChessCamHub implements DurableObject {
         memory: compactPrivateMemory(turn.private),
         inputChars: turn.inputChars,
         outputChars: turn.outputChars,
+        inputTokens: turn.inputTokens,
+        outputTokens: turn.outputTokens,
         fallback: false,
         latencyMs: Date.now() - startedAt,
       });
     } catch (error) {
       console.error('agent-move failed', stringifyError(error));
       if (isTransientAgentError(error)) {
+        this.agentCooldowns.set(profile.route, Date.now() + 180_000);
         return Response.json(
           {
             ok: false,
@@ -261,6 +293,8 @@ export class ChessCamHub implements DurableObject {
         { ok: false, error: 'O agente não respondeu com um lance legal a tempo. Tente novamente.' },
         { status: 502 },
       );
+    } finally {
+      this.activeAgentRoutes.delete(profile.route);
     }
   }
 

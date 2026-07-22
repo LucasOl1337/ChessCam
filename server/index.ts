@@ -8,7 +8,7 @@ import path from 'node:path';
 import { WebSocketServer, WebSocket } from 'ws';
 import { createServer } from 'http';
 import { Chess } from 'chess.js';
-import { askChessAgent, compactPrivateMemory, type AgentGlobalMessage } from '../src/agent/agentGateway';
+import { askChessAgent, compactPrivateMemory, shortlistAgentMoves, type AgentGlobalMessage } from '../src/agent/agentGateway';
 import { AGENT_MODEL_PROFILES, getAgentModelProfile } from '../src/agent/models';
 
 type PlayerColor = 'white' | 'black';
@@ -372,7 +372,7 @@ app.get('/api/health', (_req, res) => {
 app.get('/api/agent-models', (_req, res) => {
   res.json({
     ok: true,
-    profiles: AGENT_MODEL_PROFILES.map(({ id, label, route, available, note }) => ({ id, label, route, available, note })),
+    profiles: AGENT_MODEL_PROFILES.map(({ id, label, route, available, speed, note }) => ({ id, label, route, available, speed, note })),
   });
 });
 
@@ -416,8 +416,8 @@ app.post('/api/agent-move', express.json({ limit: '16kb' }), async (req, res) =>
   const startedAt = Date.now();
   try {
     const turn = await askChessAgent(
-      { baseUrl, apiKey, route: profile.route, timeoutMs: 60_000 },
-      { color, fen, legalMoves, history, ply, privateMemory, globalChat },
+      { baseUrl, apiKey, route: profile.route, timeoutMs: profile.speed === 'slow' ? 90_000 : profile.speed === 'balanced' ? 60_000 : 45_000 },
+      { color, fen, legalMoves: profile.speed === 'slow' ? shortlistAgentMoves(fen, 12) : legalMoves, history, ply, privateMemory, globalChat },
     );
     return res.json({
       ok: true,
@@ -427,6 +427,8 @@ app.post('/api/agent-move', express.json({ limit: '16kb' }), async (req, res) =>
       memory: compactPrivateMemory(turn.private),
       inputChars: turn.inputChars,
       outputChars: turn.outputChars,
+      inputTokens: turn.inputTokens,
+      outputTokens: turn.outputTokens,
       fallback: false,
       latencyMs: Date.now() - startedAt,
     });

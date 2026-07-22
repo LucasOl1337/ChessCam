@@ -58,6 +58,7 @@
 .arena-danger { padding: 0 13px; border: 1px solid #8b4b43; color: #f0beb8; background: #3b211e; }
 .arena-reset { width: 36px; }
 .arena-actions button:disabled { opacity: .5; cursor: not-allowed; }
+.arena-speed-warning { padding: 9px 11px; border: 1px solid rgba(222,175,78,.42); border-radius: 9px; color: #e8cf91; background: rgba(99,72,20,.2); font-size: 11px; line-height: 1.45; }
 .arena-outcome { display: grid; gap: 4px; margin-bottom: 8px; padding: 9px 12px; border: 1px solid rgba(185,234,122,.28); border-radius: 9px; color: #dff6c3; background: rgba(123,164,74,.12); font-size: 12px; }
 .arena-outcome.is-error { border-color: rgba(228,111,99,.32); color: #f1c1bb; background: rgba(139,61,54,.13); }
 .arena-outcome span { color: #939b8d; font-size: 11px; }

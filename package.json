@@ -10,6 +10,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "test:agent-match": "node scripts/validate-agent-match.mjs",
+    "test:agent-performance": "node scripts/check-agent-performance.mjs",
     "preview": "vite preview",
     "worker:dev": "npm run build && wrangler dev",
     "worker:deploy": "npm run build && wrangler deploy",

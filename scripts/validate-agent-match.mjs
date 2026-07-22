@@ -12,30 +12,19 @@ let totalLatency = 0;
 let privateInsights = 0;
 let globalMessages = 0;
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 async function requestMove(body) {
-  for (let attempt = 1; attempt <= 6; attempt += 1) {
-    const response = await fetch(`${baseUrl}/api/agent-move`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        origin: new URL(baseUrl).origin,
-        'user-agent': 'ChessCam-agent-match-validator/2',
-      },
-      body: JSON.stringify(body),
-    });
-    const payload = await response.json();
-    if (response.ok && payload.ok) return payload;
-    const retryable = response.status === 429 || response.status === 502 || response.status === 503 || payload.retryable;
-    if (!retryable || attempt === 6) {
-      throw new Error(`status=${response.status} error=${payload.error}`);
-    }
-    const retryAfter = Math.min(20, Number(response.headers.get('retry-after')) || attempt * 3);
-    console.log(`RETRY ply=${body.ply} model=${body.profileId} attempt=${attempt} wait=${retryAfter}s reason=${payload.code || response.status}`);
-    await sleep(retryAfter * 1000);
-  }
-  throw new Error('retry budget exhausted');
+  const response = await fetch(`${baseUrl}/api/agent-move`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      origin: new URL(baseUrl).origin,
+      'user-agent': 'ChessCam-agent-match-validator/3',
+    },
+    body: JSON.stringify(body),
+  });
+  const payload = await response.json();
+  if (response.ok && payload.ok) return payload;
+  throw new Error(`status=${response.status} code=${payload.code || '-'} error=${payload.error}`);
 }
 
 for (let ply = 1; ply <= maxPlies && !game.isGameOver(); ply += 1) {
@@ -46,7 +35,7 @@ for (let ply = 1; ply <= maxPlies && !game.isGameOver(); ply += 1) {
     profileId,
     color,
     ply,
-    history: game.history().slice(-8),
+    history: game.history().slice(-4),
     privateMemory: privateMemory[color],
     globalChat,
   });
@@ -66,7 +55,7 @@ for (let ply = 1; ply <= maxPlies && !game.isGameOver(); ply += 1) {
   }
   if (payload.global) {
     globalMessages += 1;
-    globalChat = [...globalChat, { color, ply, message: payload.global }].slice(-6);
+    globalChat = [...globalChat, { color, ply, message: payload.global }].slice(-3);
   }
   if (ply % 10 === 0 || game.isGameOver()) {
     console.log(`PLY=${ply} LAST=${move.san} FALLBACKS=${fallbacks}`);

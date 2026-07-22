@@ -32,6 +32,8 @@ type ArenaMove = {
   fallback: boolean;
   inputChars: number;
   outputChars: number;
+  inputTokens?: number;
+  outputTokens?: number;
 };
 
 type ArenaSession = {
@@ -48,6 +50,8 @@ type AgentMoveResponse = {
   fallback?: boolean;
   inputChars?: number;
   outputChars?: number;
+  inputTokens?: number;
+  outputTokens?: number;
   error?: string;
   code?: string;
   retryable?: boolean;
@@ -236,7 +240,7 @@ export function AgentArena({ onBack, initialMode = 'ai-vs-ai' }: { onBack: () =>
   const restoredMatch = React.useMemo(() => loadActiveArenaMatch(), []);
   const [matchMode, setMatchMode] = React.useState<ArenaMatchMode>(restoredMatch?.mode ?? initialMode);
   const [whiteProfileId, setWhiteProfileId] = React.useState(restoredMatch?.whiteProfileId ?? 'gpt-5-6-sol');
-  const [blackProfileId, setBlackProfileId] = React.useState(restoredMatch?.blackProfileId ?? 'gpt-5-6-luna-xhigh');
+  const [blackProfileId, setBlackProfileId] = React.useState(restoredMatch?.blackProfileId ?? 'gpt-5-6-sol');
   const [fen, setFen] = React.useState(restoredMatch?.fen ?? START_FEN);
   const [moves, setMoves] = React.useState<ArenaMove[]>(restoredMatch?.moves ?? []);
   const [status, setStatus] = React.useState<ArenaStatus>(
@@ -263,6 +267,12 @@ export function AgentArena({ onBack, initialMode = 'ai-vs-ai' }: { onBack: () =>
   const whiteProfile = getAgentModelProfile(whiteProfileId)!;
   const blackProfile = getAgentModelProfile(blackProfileId)!;
   const humanColor: AgentColor | null = matchMode === 'human-white' ? 'white' : matchMode === 'human-black' ? 'black' : null;
+  const selectedAgentProfiles = matchMode === 'human-white'
+    ? [blackProfile]
+    : matchMode === 'human-black'
+      ? [whiteProfile]
+      : [whiteProfile, blackProfile];
+  const hasSlowProfile = selectedAgentProfiles.some((profile) => profile.speed === 'slow');
   const whiteMoves = React.useMemo(() => moves.filter((move) => move.color === 'white'), [moves]);
   const blackMoves = React.useMemo(() => moves.filter((move) => move.color === 'black'), [moves]);
   const globalMessages = React.useMemo(() => moves.filter((move) => move.global), [moves]);
@@ -391,35 +401,25 @@ export function AgentArena({ onBack, initialMode = 'ai-vs-ai' }: { onBack: () =>
   }
 
   async function requestAgentMove(game: Chess, profileId: string, color: AgentColor) {
-    for (let attempt = 1; attempt <= 2; attempt += 1) {
-      const controller = new AbortController();
-      abortRef.current = controller;
-      const response = await fetch('/api/agent-move', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: controller.signal,
-        body: JSON.stringify({
-          fen: game.fen(),
-          profileId,
-          color,
-          ply: game.history().length + 1,
-          history: game.history().slice(-8),
-          privateMemory: privateMemoryRef.current[color],
-          globalChat: globalChatRef.current.slice(-6),
-        }),
-      });
-      const payload = await response.json() as AgentMoveResponse;
-      if (response.ok && payload.ok && payload.move) return payload;
-
-      if (payload.code === 'AGENT_TEMPORARILY_UNAVAILABLE') {
-        throw new Error(payload.error || 'O modelo ficou temporariamente indisponível.');
-      }
-      const retryable = response.status === 429 || response.status === 502 || response.status === 503;
-      if (!retryable || attempt === 2) throw new Error(payload.error || `Falha do agente (${response.status})`);
-      const retryAfterSeconds = Math.min(8, Number(response.headers.get('Retry-After')) || attempt);
-      await delay(retryAfterSeconds * 1000);
-    }
-    throw new Error('O agente não conseguiu concluir a jogada.');
+    const controller = new AbortController();
+    abortRef.current = controller;
+    const response = await fetch('/api/agent-move', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
+      body: JSON.stringify({
+        fen: game.fen(),
+        profileId,
+        color,
+        ply: game.history().length + 1,
+        history: game.history().slice(-4),
+        privateMemory: privateMemoryRef.current[color],
+        globalChat: globalChatRef.current.slice(-3),
+      }),
+    });
+    const payload = await response.json() as AgentMoveResponse;
+    if (response.ok && payload.ok && payload.move) return payload;
+    throw new Error(payload.error || `Falha do agente (${response.status})`);
   }
 
   async function runMatch(game: Chess, resume = false, mode: ArenaMatchMode = matchMode) {
@@ -450,6 +450,8 @@ export function AgentArena({ onBack, initialMode = 'ai-vs-ai' }: { onBack: () =>
         let fallback = false;
         let inputChars = 0;
         let outputChars = 0;
+        let inputTokens = 0;
+        let outputTokens = 0;
         let model = profile.label;
 
         if (color === runHumanColor) {
@@ -483,13 +485,15 @@ export function AgentArena({ onBack, initialMode = 'ai-vs-ai' }: { onBack: () =>
           fallback = Boolean(response.fallback);
           inputChars = response.inputChars ?? 0;
           outputChars = response.outputChars ?? 0;
+          inputTokens = response.inputTokens ?? 0;
+          outputTokens = response.outputTokens ?? 0;
           privateMemoryRef.current[color] = [
-            `Decisão anterior: ${insight.decision}`,
-            `Plano rival: ${insight.opponentPlan}`,
-            `Previsão rival: ${insight.opponentPrediction}`,
-            `Plano de longo prazo: ${insight.longTermStrategy}`,
-            `Adaptação: ${insight.adaptations}`,
-          ].join(' ').slice(0, 1000);
+            `D:${insight.decision}`,
+            `O:${insight.opponentPlan}`,
+            `P:${insight.opponentPrediction}`,
+            `S:${insight.longTermStrategy}`,
+            `A:${insight.adaptations}`,
+          ].join(' ').slice(0, 280);
           if (global) globalChatRef.current = [...globalChatRef.current, { color, ply: game.history().length, message: global }].slice(-6);
         }
 
@@ -507,6 +511,8 @@ export function AgentArena({ onBack, initialMode = 'ai-vs-ai' }: { onBack: () =>
           fallback,
           inputChars,
           outputChars,
+          inputTokens,
+          outputTokens,
         }]);
         await delay(TURN_GAP_MS);
       }
@@ -605,6 +611,12 @@ export function AgentArena({ onBack, initialMode = 'ai-vs-ai' }: { onBack: () =>
             </div>
           </div>
 
+          {hasSlowProfile && !running && (
+            <div className="arena-speed-warning">
+              Perfil experimental selecionado: pode levar mais de 30 segundos em algumas posições. Para partidas fluidas, prefira GPT 5.6 Sol Normal.
+            </div>
+          )}
+
           {(result || error) && (
             <div className={`arena-outcome ${error ? 'is-error' : ''}`}>
               <strong>{error ? 'Partida interrompida' : result}</strong>
@@ -639,7 +651,7 @@ export function AgentArena({ onBack, initialMode = 'ai-vs-ai' }: { onBack: () =>
           <div className="arena-performance">
             <span><Gauge size={14} /> média {averageLatency ? `${(averageLatency / 1000).toFixed(1)}s` : '—'}</span>
             <span>{moves.length} meios-lances</span>
-            <span>contexto compacto · 8 lances</span>
+            <span>decisão compacta · sem retry automático</span>
           </div>
 
           <div className="arena-mobile-tabs" aria-label="Selecionar chat">
@@ -757,7 +769,7 @@ function PrivateChatPanel({ color, profile, entries, active, human = false, clas
         icon={<Bot size={17} />}
         eyebrow={human ? 'SEUS LANCES' : 'CHAT PRIVADO'}
         title={profile}
-        meta={human ? `${color === 'white' ? 'Brancas' : 'Pretas'} · registro das suas decisões` : `${color === 'white' ? 'Brancas' : 'Pretas'} · só este modelo recebe esta memória`}
+        meta={human ? `${color === 'white' ? 'Brancas' : 'Pretas'} · registro das suas decisões` : `${color === 'white' ? 'Brancas' : 'Pretas'} · explicação rápida gerada da posição`}
         active={active}
       />
       <AutoScrollFeed itemCount={entries.length} className="agent-chat-feed">
@@ -774,7 +786,9 @@ function PrivateChatPanel({ color, profile, entries, active, human = false, clas
             <ThoughtLine label="O que espero que aconteça em seguida" text={entry.insight.opponentPrediction} />
             <ThoughtLine label="Meu objetivo para os próximos lances" text={entry.insight.longTermStrategy} emphasis />
             <ThoughtLine label="Como adaptei meu plano" text={entry.insight.adaptations} emphasis />
-            <small>{entry.fallback ? 'lance de segurança · ' : ''}{entry.inputChars} entrada / {entry.outputChars} saída</small>
+            <small>{entry.inputTokens || entry.outputTokens
+              ? `${entry.inputTokens ?? 0} tokens enviados / ${entry.outputTokens ?? 0} processados · resposta visível: ${entry.outputChars} caracteres`
+              : `${entry.inputChars} caracteres enviados / ${entry.outputChars} recebidos`}</small>
           </article>
         ))}
       </AutoScrollFeed>
@@ -971,7 +985,7 @@ function ModelSelect({ label, value, disabled, onChange }: {
       <select value={value} disabled={disabled} onChange={(event) => onChange(event.target.value)}>
         {AGENT_MODEL_PROFILES.map((profile) => (
           <option key={profile.id} value={profile.id} disabled={!profile.available}>
-            {profile.label}{profile.available ? '' : ' — indisponível'}
+            {profile.label}{profile.available ? profile.speed === 'slow' ? ' — lento' : profile.speed === 'fast' ? ' — rápido' : '' : ' — indisponível'}
           </option>
         ))}
       </select>
